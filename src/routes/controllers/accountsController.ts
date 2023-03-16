@@ -22,8 +22,12 @@ async function createAccount(req: Request, res: Response, next: NextFunction) {
       })
     })
     .catch((error: Error) => {
-      logger.error('Account creation error', { error })
-      throw new InternalError('Failed to create account')
+      if (error instanceof AccountModule.errors.BadAccountCreationDataError) {
+        next(error)
+      } else {
+        logger.error('Account creation error', { error })
+        throw new InternalError('Failed to create account')
+      }
     })
 }
 
