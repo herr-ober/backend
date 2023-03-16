@@ -1,26 +1,20 @@
 import { celebrate, Joi, Segments } from 'celebrate'
 import { Router } from 'express'
 import asyncHandlerDecorator from '../../common/util/asyncHandlerDecorator'
-import sampleController from '../controllers/sampleController'
+import accountsController from '../controllers/accountsController'
 
 const router: Router = Router()
 
 router.post(
   '/',
   celebrate({
-    [Segments.HEADERS]: Joi.object()
-      .keys({
-        // Require Authorization header
-        // authorization: Joi.string().required()
-      })
-      // Allow unknown headers
-      .unknown(true),
     [Segments.BODY]: Joi.object().keys({
       email: Joi.string().email().required(),
-      name: Joi.string().required()
+      name: Joi.string().required(),
+      password: Joi.string().required()
     })
   }),
-  asyncHandlerDecorator(sampleController.createSample)
+  asyncHandlerDecorator(accountsController.createAccount)
 )
 
 router.patch(
@@ -29,7 +23,7 @@ router.patch(
     [Segments.HEADERS]: Joi.object()
       .keys({
         // Require Authorization header
-        // authorization: Joi.string().required()
+        authorization: Joi.string().required()
       })
       // Allow unknown headers
       .unknown(true),
@@ -38,12 +32,13 @@ router.patch(
       updates: Joi.object()
         .keys({
           email: Joi.string(),
-          name: Joi.string()
+          name: Joi.string(),
+          password: Joi.string()
         })
         .required()
     })
   }),
-  asyncHandlerDecorator(sampleController.updateSample)
+  asyncHandlerDecorator(accountsController.updateAccount)
 )
 
 router.delete(
@@ -52,7 +47,7 @@ router.delete(
     [Segments.HEADERS]: Joi.object()
       .keys({
         // Require Authorization header
-        // authorization: Joi.string().required()
+        authorization: Joi.string().required()
       })
       // Allow unknown headers
       .unknown(true),
@@ -60,7 +55,7 @@ router.delete(
       uuid: Joi.string().required()
     })
   }),
-  asyncHandlerDecorator(sampleController.deleteSample)
+  asyncHandlerDecorator(accountsController.deleteAccount)
 )
 
 export default router
