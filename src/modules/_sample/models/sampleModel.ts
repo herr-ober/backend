@@ -7,7 +7,7 @@ import {
   Model,
   Sequelize
 } from 'sequelize'
-import { uniqueId } from 'src/common/helpers/uuidHelper'
+import { uniqueId } from '../../../common/helpers/uuidHelper'
 import { ISample } from '../types'
 
 class SampleModel

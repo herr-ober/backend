@@ -1,3 +1,3 @@
-import { BadRequestError } from 'src/errors'
+import { BadRequestError } from '../../../errors'
 
 export class BadAuthTokenDataError extends BadRequestError {}
