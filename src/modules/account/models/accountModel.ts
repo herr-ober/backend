@@ -8,26 +8,27 @@ import {
   Sequelize
 } from 'sequelize'
 import { uniqueId } from '../../../common/helpers/uuidHelper'
-import { ISample } from '../types'
+import { IAccount } from '../types'
 
-class SampleModel
+class AccountModel
   extends Model<
-    InferAttributes<SampleModel>,
-    InferCreationAttributes<SampleModel>
+    InferAttributes<AccountModel>,
+    InferCreationAttributes<AccountModel>
   >
-  implements ISample
+  implements IAccount
 {
   declare id: CreationOptional<number>
   declare uuid: CreationOptional<string>
   declare email: string
   declare name: string
+  declare passwordHash: string
 
   declare createdAt: CreationOptional<Date>
   declare updatedAt: CreationOptional<Date>
 }
 
 export default function (sequelize: Sequelize) {
-  SampleModel.init(
+  AccountModel.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -48,17 +49,21 @@ export default function (sequelize: Sequelize) {
         type: DataTypes.STRING(64),
         allowNull: false
       },
+      passwordHash: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
       createdAt: DataTypes.DATE,
       updatedAt: DataTypes.DATE
     },
     {
       sequelize,
-      modelName: 'Sample',
-      tableName: 'samples',
+      modelName: 'Account',
+      tableName: 'accounts',
       timestamps: true,
       freezeTableName: true
     }
   )
 
-  return SampleModel
+  return AccountModel
 }

@@ -9,7 +9,7 @@ import {
   ValidationError
 } from '../../errors'
 import { isCelebrateError } from 'celebrate'
-import sampleRouter from './sample'
+import accountsRouter from './accounts'
 
 const router: Router = Router()
 
@@ -53,7 +53,7 @@ router.use(timeout(asNumber(process.env.API_TIMEOUT)))
 /**
  * Inject module routers
  */
-router.use('/sample', sampleRouter)
+router.use('/accounts', accountsRouter)
 
 /**
  * Add handler for requests to inexistent API endpoints

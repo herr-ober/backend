@@ -1,14 +1,39 @@
 import { DataTypes, Sequelize } from 'sequelize'
 import glob from 'glob'
 import path from 'path'
+import { asNumber, asString } from '../common/helpers/dataHelper'
 
 const database: any = {}
 
-const sequelize: Sequelize = new Sequelize('database', 'username', 'password', {
-  dialect: 'sqlite',
-  storage: process.env.DB_STORAGE || './database.sqlite',
-  logging: (sql: string) => {
-    logger.debug(sql)
+const databaseName: string = asString(process.env.DB_DATABASE)
+const host: string = asString(process.env.DB_HOST)
+const port: number = asNumber(process.env.DB_PORT)
+const username: string = asString(process.env.DB_USERNAME)
+const password: string = asString(process.env.DB_PASSWORD)
+const maxConnectionsPerPool: number = asNumber(
+  process.env.DB_MAX_CONNECTIONS_PER_POOL
+)
+const dbSlowQueryThreshold: number = asNumber(
+  process.env.DB_SLOW_QUERY_THRESHOLD
+)
+
+const sequelize: Sequelize = new Sequelize(databaseName, username, password, {
+  dialect: 'mysql',
+  host,
+  port,
+  pool: {
+    max: maxConnectionsPerPool,
+    min: 2,
+    acquire: 30000,
+    idle: 10000
+  },
+  benchmark: true, // passes the query execution time as second arg to logging method
+  logging: (queryString, execTimeMs) => {
+    if (asNumber(execTimeMs) > dbSlowQueryThreshold) {
+      logger.warn(`Slow sequelize query ${execTimeMs}ms`, {
+        queryString
+      })
+    }
   }
 })
 
