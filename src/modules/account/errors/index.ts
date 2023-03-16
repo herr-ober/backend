@@ -1,3 +1,4 @@
+export * from './BadAccountCreationDataError'
 export * from './BadAccountUpdateDataError'
 export * from './BadAccountDeletionDataError'
 export * from './BadAuthPasswordDataError'

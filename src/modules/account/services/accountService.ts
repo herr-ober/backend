@@ -2,6 +2,7 @@ import { inject, injectable } from 'inversify'
 import { generateHash } from '../../../common/util/hashingUtil'
 import { DI_TYPES } from '../diTypes'
 import {
+  BadAccountCreationDataError,
   BadAccountDeletionDataError,
   BadAccountUpdateDataError
 } from '../errors'
@@ -17,6 +18,14 @@ class AccountService implements IAccountService {
   }
 
   async createAccount(data: ICreateAccountData): Promise<IAccount> {
+    const existingAccount: IAccount | null = await this.getAccountByEmail(
+      data.email
+    )
+    if (existingAccount)
+      throw new BadAccountCreationDataError(
+        'Email is already associated with an account'
+      )
+
     data.passwordHash = await generateHash(data.password)
     return this.accountRepo.create(data)
   }
