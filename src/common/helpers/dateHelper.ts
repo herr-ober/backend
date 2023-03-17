@@ -29,10 +29,7 @@ export function addTime(timeUnitString: string, date: Date = new Date()): Date {
  * @param {Date} date - The date to add the seconds to
  * @returns A Date object with the number of seconds added to the date
  */
-export function addSeconds(
-  numOfSeconds: number,
-  date: Date = new Date()
-): Date {
+export function addSeconds(numOfSeconds: number, date: Date = new Date()): Date {
   date.setTime(date.getTime() + numOfSeconds * 1000)
   return date
 }
@@ -44,10 +41,7 @@ export function addSeconds(
  * @param {Date} date - The date to add minutes to
  * @returns A Date object with the number of minutes added to the date
  */
-export function addMinutes(
-  numOfMinutes: number,
-  date: Date = new Date()
-): Date {
+export function addMinutes(numOfMinutes: number, date: Date = new Date()): Date {
   date.setTime(date.getTime() + numOfMinutes * 60 * 1000)
   return date
 }

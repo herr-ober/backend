@@ -2,10 +2,9 @@ import { Request, Response, NextFunction } from 'express'
 import { InternalError } from '../../errors'
 import { container } from '../../modules/dependencyContainer'
 import * as AccountModule from '../../modules/account'
+import { asString } from '../../common/helpers/dataHelper'
 
-const accountService: AccountModule.interfaces.IAccountService = container.get(
-  AccountModule.DI_TYPES.AccountService
-)
+const accountService: AccountModule.interfaces.IAccountService = container.get(AccountModule.DI_TYPES.AccountService)
 
 async function createAccount(req: Request, res: Response, next: NextFunction) {
   const email: string = req.body.email
@@ -31,8 +30,27 @@ async function createAccount(req: Request, res: Response, next: NextFunction) {
     })
 }
 
+async function authPassword(req: Request, res: Response, next: NextFunction) {
+  const email: string = req.body.email
+  const password: string = req.body.password
+
+  return accountService
+    .authPassword({ email, password })
+    .then((token: string) => {
+      return res.status(200).json({ token })
+    })
+    .catch((error: Error) => {
+      if (error instanceof AccountModule.errors.InvalidAuthPasswordDataError) {
+        next(error)
+      } else {
+        logger.error('Password auth error', { error })
+        throw new InternalError('Failed to authenticate by password')
+      }
+    })
+}
+
 async function updateAccount(req: Request, res: Response, next: NextFunction) {
-  const uuid: string = req.body.uuid
+  const uuid: string = asString(req.auth!.uuid)
   const updates: object = req.body.updates
 
   return accountService
@@ -51,7 +69,7 @@ async function updateAccount(req: Request, res: Response, next: NextFunction) {
 }
 
 async function deleteAccount(req: Request, res: Response, next: NextFunction) {
-  const uuid: string = req.body.uuid
+  const uuid: string = asString(req.auth!.uuid)
 
   return accountService
     .deleteAccountByUuid(uuid)
@@ -70,6 +88,7 @@ async function deleteAccount(req: Request, res: Response, next: NextFunction) {
 
 export default {
   createAccount,
+  authPassword,
   updateAccount,
   deleteAccount
 }

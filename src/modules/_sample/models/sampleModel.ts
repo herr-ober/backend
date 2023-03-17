@@ -1,22 +1,9 @@
 /* eslint-disable no-use-before-define */
-import {
-  CreationOptional,
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-  Model,
-  Sequelize
-} from 'sequelize'
+import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model, Sequelize } from 'sequelize'
 import { uniqueId } from '../../../common/helpers/uuidHelper'
 import { ISample } from '../types'
 
-class SampleModel
-  extends Model<
-    InferAttributes<SampleModel>,
-    InferCreationAttributes<SampleModel>
-  >
-  implements ISample
-{
+class SampleModel extends Model<InferAttributes<SampleModel>, InferCreationAttributes<SampleModel>> implements ISample {
   declare id: CreationOptional<number>
   declare uuid: CreationOptional<string>
   declare email: string

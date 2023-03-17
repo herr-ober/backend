@@ -2,9 +2,7 @@ import winston from 'winston'
 import _ from 'lodash'
 import { asString } from '../helpers/dataHelper'
 
-const formatters: winston.Logform.Format[] = ['production'].includes(
-  asString(process.env.NODE_ENV)
-)
+const formatters: winston.Logform.Format[] = ['production'].includes(asString(process.env.NODE_ENV))
   ? [
       // https://github.com/winstonjs/winston/issues/1338
       winston.format.printf((info) => {
@@ -26,12 +24,8 @@ const formatters: winston.Logform.Format[] = ['production'].includes(
       winston.format.printf((info) => {
         const { level, message, ...args } = info
         const stack = _.get(args, 'error.stack') || _.get(args, 'err.stack', '')
-        const stringified = Object.keys(args).length
-          ? JSON.stringify(args, errorReplacer)
-          : ''
-        return `[${level}]:${message} ${stringified}${
-          stack ? '\n' : ''
-        }${stack}`
+        const stringified = Object.keys(args).length ? JSON.stringify(args, errorReplacer) : ''
+        return `[${level}]:${message} ${stringified}${stack ? '\n' : ''}${stack}`
       })
     ]
 

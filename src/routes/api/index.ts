@@ -2,12 +2,7 @@ import cors from 'cors'
 import { NextFunction, Request, Response, Router } from 'express'
 import timeout from 'connect-timeout'
 import { asNumber } from '../../common/helpers/dataHelper'
-import {
-  NotFoundError,
-  ServiceError,
-  ServiceUnavailableError,
-  ValidationError
-} from '../../errors'
+import { NotFoundError, ServiceError, ServiceUnavailableError, ValidationError } from '../../errors'
 import { isCelebrateError } from 'celebrate'
 import accountsRouter from './accounts'
 
@@ -18,10 +13,7 @@ const router: Router = Router()
  */
 router.use((req: Request, res: Response, next: NextFunction) => {
   // Disable caching
-  res.setHeader(
-    'Cache-Control',
-    'no-store, no-cache, must-revalidate, proxy-revalidate'
-  )
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
   res.setHeader('Pragma', 'no-cache')
 
   // Set content-type to JSON
@@ -34,10 +26,7 @@ router.use((req: Request, res: Response, next: NextFunction) => {
  * Add CORS headers
  */
 const corsOptions: cors.CorsOptions = {
-  origin:
-    process.env.NODE_ENV === 'development'
-      ? process.env.APP_DEV_URL
-      : process.env.APP_URL,
+  origin: process.env.NODE_ENV === 'development' ? process.env.APP_DEV_URL : process.env.APP_URL,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   credentials: true,
   allowedHeaders: ['X-Requested-With', 'Content-Type', 'Authorization'],
@@ -91,15 +80,8 @@ router.use((err: any, req: Request, res: Response, next: NextFunction) => {
     // req.timedout is added by the connect-timeout middleware
     error = new ServiceUnavailableError('API response timeout')
   } else if (!(err instanceof ServiceError)) {
-    logger.warn(
-      'Unknown error thrown. Consider extending it from the generic error classes',
-      { err }
-    )
-    error = new ServiceError(
-      err.message,
-      err.status || 500,
-      err.code || 'UNKNOWN_ERROR'
-    )
+    logger.warn('Unknown error thrown. Consider extending it from the generic error classes', { err })
+    error = new ServiceError(err.message, err.status || 500, err.code || 'UNKNOWN_ERROR')
   }
 
   error.stack = originalStackTrace
