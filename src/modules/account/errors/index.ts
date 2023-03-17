@@ -1,5 +1,5 @@
 export * from './BadAccountCreationDataError'
 export * from './BadAccountUpdateDataError'
 export * from './BadAccountDeletionDataError'
-export * from './BadAuthPasswordDataError'
-export * from './BadAuthTokenDataError'
+export * from './InvalidAuthPasswordDataError'
+export * from './InvalidAuthTokenDataError'

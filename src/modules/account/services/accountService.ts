@@ -1,13 +1,23 @@
 import { inject, injectable } from 'inversify'
-import { generateHash } from '../../../common/util/hashingUtil'
+import * as jose from 'jose'
+import { addTime } from '../../../common/helpers/dateHelper'
+import { generateToken, verifyToken } from '../../../common/util/tokenUtil'
+import { generateHash, verifyPassword } from '../../../common/util/hashingUtil'
 import { DI_TYPES } from '../diTypes'
 import {
   BadAccountCreationDataError,
   BadAccountDeletionDataError,
-  BadAccountUpdateDataError
+  BadAccountUpdateDataError,
+  InvalidAuthPasswordDataError
 } from '../errors'
 import { IAccountRepo, IAccountService } from '../interfaces'
-import { IAccount, ICreateAccountData, IUpdateAccountData } from '../types'
+import {
+  IAccount,
+  IAuthPasswordData,
+  ICreateAccountData,
+  IUpdateAccountData
+} from '../types'
+import { TokenIssuer } from '../../../common/enums'
 
 @injectable()
 class AccountService implements IAccountService {
@@ -30,6 +40,35 @@ class AccountService implements IAccountService {
     return this.accountRepo.create(data)
   }
 
+  async authPassword(data: IAuthPasswordData): Promise<string> {
+    const account: IAccount | null = await this.getAccountByEmail(data.email)
+    if (!account)
+      throw new InvalidAuthPasswordDataError('Email or password incorrect')
+
+    const credentialsMatch: boolean = await verifyPassword(
+      account.passwordHash,
+      data.password
+    )
+    if (!credentialsMatch)
+      throw new InvalidAuthPasswordDataError('Email or password incorrect')
+
+    const payload: jose.JWTPayload = {
+      iss: TokenIssuer.ACCOUNT,
+      sub: account.uuid,
+      exp: addTime('1d').getTime()
+    }
+    return generateToken(payload)
+  }
+
+  async authToken(token: string): Promise<IAccount> {
+    const payload: jose.JWTPayload = await verifyToken(token)
+    const account: IAccount | null = await this.getAccountByUuid(payload.sub!)
+    if (!account)
+      throw new InvalidAuthPasswordDataError('Email or password incorrect')
+
+    return account
+  }
+
   async getAccountByUuid(uuid: string): Promise<IAccount | null> {
     return this.accountRepo.getByUuid(uuid)
   }
@@ -50,7 +89,7 @@ class AccountService implements IAccountService {
       uuid,
       data
     )
-    if (!affectedRows || !!affectedRows[0]) {
+    if (!affectedRows[0]) {
       throw new BadAccountUpdateDataError(
         'Failed to update sample - 0 rows affected'
       )
