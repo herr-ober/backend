@@ -10,12 +10,8 @@ const host: string = asString(process.env.DB_HOST)
 const port: number = asNumber(process.env.DB_PORT)
 const username: string = asString(process.env.DB_USERNAME)
 const password: string = asString(process.env.DB_PASSWORD)
-const maxConnectionsPerPool: number = asNumber(
-  process.env.DB_MAX_CONNECTIONS_PER_POOL
-)
-const dbSlowQueryThreshold: number = asNumber(
-  process.env.DB_SLOW_QUERY_THRESHOLD
-)
+const maxConnectionsPerPool: number = asNumber(process.env.DB_MAX_CONNECTIONS_PER_POOL)
+const dbSlowQueryThreshold: number = asNumber(process.env.DB_SLOW_QUERY_THRESHOLD)
 
 const sequelize: Sequelize = new Sequelize(databaseName, username, password, {
   dialect: 'mysql',

@@ -7,15 +7,9 @@ import { TokenIssuer } from '../../common/enums'
 import * as AccountModule from '../../modules/account'
 import { container } from '../../modules/dependencyContainer'
 
-const accountService: AccountModule.interfaces.IAccountService = container.get(
-  AccountModule.DI_TYPES.AccountService
-)
+const accountService: AccountModule.interfaces.IAccountService = container.get(AccountModule.DI_TYPES.AccountService)
 
-async function isAuthenticated(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+async function isAuthenticated(req: Request, res: Response, next: NextFunction) {
   const token: string | null = checkAuthorizationHeader(req)
   if (!token) return next(new UnauthorizedError('Invalid token'))
 
@@ -30,8 +24,7 @@ async function isAuthenticated(
 
   switch (payload.iss!) {
     case TokenIssuer.ACCOUNT: {
-      const account: AccountModule.types.IAccount | null =
-        await accountService.getAccountByUuid(uuid)
+      const account: AccountModule.types.IAccount | null = await accountService.getAccountByUuid(uuid)
       if (!account) return next(new UnauthorizedError('Invalid token'))
 
       req.auth.issuer = TokenIssuer.ACCOUNT

@@ -1,9 +1,4 @@
-import {
-  IAccount,
-  IAuthPasswordData,
-  ICreateAccountData,
-  IUpdateAccountData
-} from '../types'
+import { IAccount, IAuthPasswordData, ICreateAccountData, IUpdateAccountData } from '../types'
 
 export interface IAccountService {
   createAccount(data: ICreateAccountData): Promise<IAccount>

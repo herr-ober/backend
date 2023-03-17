@@ -20,12 +20,8 @@ class AccountRepo implements IAccountRepo {
    * @param {string[] | false} [scopes] - An array of scopes to apply to the query.
    * @returns An account object or null
    */
-  async getOneByCriteria(
-    criteria: object,
-    scopes?: string[] | false
-  ): Promise<IAccount | null> {
-    const definedScopes =
-      scopes || (scopes === false ? false : ['defaultScope'])
+  async getOneByCriteria(criteria: object, scopes?: string[] | false): Promise<IAccount | null> {
+    const definedScopes = scopes || (scopes === false ? false : ['defaultScope'])
     const parameters: object = {
       where: criteria
     }
@@ -49,12 +45,8 @@ class AccountRepo implements IAccountRepo {
    * @param {string[] | false} [scopes] - An array of scopes to apply to the query.
    * @returns An array of Account objects
    */
-  async getManyByCriteria(
-    criteria: object,
-    scopes?: string[] | false
-  ): Promise<IAccount[]> {
-    const definedScopes =
-      scopes || (scopes === false ? false : ['defaultScope'])
+  async getManyByCriteria(criteria: object, scopes?: string[] | false): Promise<IAccount[]> {
+    const definedScopes = scopes || (scopes === false ? false : ['defaultScope'])
     const parameters: object = {
       where: criteria
     }
@@ -80,10 +72,7 @@ class AccountRepo implements IAccountRepo {
     })
   }
 
-  async updateByUuid(
-    uuid: string,
-    updates: IUpdateAccountData
-  ): Promise<number[]> {
+  async updateByUuid(uuid: string, updates: IUpdateAccountData): Promise<number[]> {
     return this.update({ uuid }, updates)
   }
 

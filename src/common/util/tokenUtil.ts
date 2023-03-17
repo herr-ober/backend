@@ -10,9 +10,7 @@ export async function generateToken(payload: jose.JWTPayload): Promise<string> {
   -----END PRIVATE KEY-----`
   const privateKey: jose.KeyLike = await jose.importPKCS8(pkcs8, algorithm)
 
-  return new jose.SignJWT(payload)
-    .setProtectedHeader({ alg: 'ES256' })
-    .sign(privateKey)
+  return new jose.SignJWT(payload).setProtectedHeader({ alg: 'ES256' }).sign(privateKey)
 }
 
 export async function verifyToken(token: string): Promise<jose.JWTPayload> {

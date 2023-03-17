@@ -1,20 +1,10 @@
 /* eslint-disable no-use-before-define */
-import {
-  CreationOptional,
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-  Model,
-  Sequelize
-} from 'sequelize'
+import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model, Sequelize } from 'sequelize'
 import { uniqueId } from '../../../common/helpers/uuidHelper'
 import { IAccount } from '../types'
 
 class AccountModel
-  extends Model<
-    InferAttributes<AccountModel>,
-    InferCreationAttributes<AccountModel>
-  >
+  extends Model<InferAttributes<AccountModel>, InferCreationAttributes<AccountModel>>
   implements IAccount
 {
   declare id: CreationOptional<number>

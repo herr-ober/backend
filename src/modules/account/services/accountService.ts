@@ -11,12 +11,7 @@ import {
   InvalidAuthPasswordDataError
 } from '../errors'
 import { IAccountRepo, IAccountService } from '../interfaces'
-import {
-  IAccount,
-  IAuthPasswordData,
-  ICreateAccountData,
-  IUpdateAccountData
-} from '../types'
+import { IAccount, IAuthPasswordData, ICreateAccountData, IUpdateAccountData } from '../types'
 import { TokenIssuer } from '../../../common/enums'
 
 @injectable()
@@ -28,13 +23,8 @@ class AccountService implements IAccountService {
   }
 
   async createAccount(data: ICreateAccountData): Promise<IAccount> {
-    const existingAccount: IAccount | null = await this.getAccountByEmail(
-      data.email
-    )
-    if (existingAccount)
-      throw new BadAccountCreationDataError(
-        'Email is already associated with an account'
-      )
+    const existingAccount: IAccount | null = await this.getAccountByEmail(data.email)
+    if (existingAccount) throw new BadAccountCreationDataError('Email is already associated with an account')
 
     data.passwordHash = await generateHash(data.password)
     return this.accountRepo.create(data)
@@ -42,15 +32,10 @@ class AccountService implements IAccountService {
 
   async authPassword(data: IAuthPasswordData): Promise<string> {
     const account: IAccount | null = await this.getAccountByEmail(data.email)
-    if (!account)
-      throw new InvalidAuthPasswordDataError('Email or password incorrect')
+    if (!account) throw new InvalidAuthPasswordDataError('Email or password incorrect')
 
-    const credentialsMatch: boolean = await verifyPassword(
-      account.passwordHash,
-      data.password
-    )
-    if (!credentialsMatch)
-      throw new InvalidAuthPasswordDataError('Email or password incorrect')
+    const credentialsMatch: boolean = await verifyPassword(account.passwordHash, data.password)
+    if (!credentialsMatch) throw new InvalidAuthPasswordDataError('Email or password incorrect')
 
     const payload: jose.JWTPayload = {
       iss: TokenIssuer.ACCOUNT,
@@ -63,8 +48,7 @@ class AccountService implements IAccountService {
   async authToken(token: string): Promise<IAccount> {
     const payload: jose.JWTPayload = await verifyToken(token)
     const account: IAccount | null = await this.getAccountByUuid(payload.sub!)
-    if (!account)
-      throw new InvalidAuthPasswordDataError('Email or password incorrect')
+    if (!account) throw new InvalidAuthPasswordDataError('Email or password incorrect')
 
     return account
   }
@@ -81,31 +65,18 @@ class AccountService implements IAccountService {
     return this.accountRepo.getByName(name)
   }
 
-  async updateAccountByUuid(
-    uuid: string,
-    data: IUpdateAccountData
-  ): Promise<number[]> {
-    const affectedRows: number[] = await this.accountRepo.updateByUuid(
-      uuid,
-      data
-    )
+  async updateAccountByUuid(uuid: string, data: IUpdateAccountData): Promise<number[]> {
+    const affectedRows: number[] = await this.accountRepo.updateByUuid(uuid, data)
     if (!affectedRows[0]) {
-      throw new BadAccountUpdateDataError(
-        'Failed to update sample - 0 rows affected'
-      )
+      throw new BadAccountUpdateDataError('Failed to update sample - 0 rows affected')
     }
     return affectedRows
   }
 
-  async deleteAccountByUuid(
-    uuid: string,
-    suppressError: boolean = false
-  ): Promise<number> {
+  async deleteAccountByUuid(uuid: string, suppressError: boolean = false): Promise<number> {
     const affectedRows: number = await this.accountRepo.deleteByUuid(uuid)
     if (affectedRows < 0 && !suppressError) {
-      throw new BadAccountDeletionDataError(
-        'Failed to delete sample - 0 rows affected'
-      )
+      throw new BadAccountDeletionDataError('Failed to delete sample - 0 rows affected')
     }
     return affectedRows
   }

@@ -22,6 +22,8 @@ Recommended extensions (VSCode):
 
 - DotENV (mikestead.dotenv)
 - ESLint (dbaeumer.vscode-eslint)
+- Prettier (esbenp.prettier-vscode)
+- EditorConfig (EditorConfig.EditorConfig)
 
 ### Environment setup
 

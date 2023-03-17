@@ -4,9 +4,7 @@ import { container } from '../../modules/dependencyContainer'
 import * as AccountModule from '../../modules/account'
 import { asString } from '../../common/helpers/dataHelper'
 
-const accountService: AccountModule.interfaces.IAccountService = container.get(
-  AccountModule.DI_TYPES.AccountService
-)
+const accountService: AccountModule.interfaces.IAccountService = container.get(AccountModule.DI_TYPES.AccountService)
 
 async function createAccount(req: Request, res: Response, next: NextFunction) {
   const email: string = req.body.email
