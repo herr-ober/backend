@@ -8,7 +8,7 @@
     "lint": "eslint \"src/**/*.{js,ts}\"",
     "lint:fix": "eslint --fix \"src/**/*.{js,ts}\"",
     "migrate": "npx sequelize-cli db:migrate",
-    "migration:create": "npx sequelize-cli migration:generate --name migration-name"
+    "migration:create": "npx sequelize-cli migration:generate --name"
   },
   "author": "",
   "license": "ISC",
