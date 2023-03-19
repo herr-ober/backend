@@ -5,6 +5,7 @@ import { asNumber } from '../../common/helpers/dataHelper'
 import { NotFoundError, ServiceError, ServiceUnavailableError, ValidationError } from '../../errors'
 import { isCelebrateError } from 'celebrate'
 import accountsRouter from './accounts'
+import eventsRouter from './events'
 
 const router: Router = Router()
 
@@ -43,6 +44,7 @@ router.use(timeout(asNumber(process.env.API_TIMEOUT)))
  * Inject module routers
  */
 router.use('/accounts', accountsRouter)
+router.use('/events', eventsRouter)
 
 /**
  * Add handler for requests to inexistent API endpoints
