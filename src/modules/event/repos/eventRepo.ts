@@ -87,6 +87,10 @@ class EventRepo implements IEventRepo {
   async deleteByUuid(uuid: string): Promise<number> {
     return this.delete({ uuid })
   }
+
+  async deleteByOrganizerUuid(organizerUuid: string): Promise<number> {
+    return this.delete({ organizerUuid })
+  }
 }
 
 export default EventRepo

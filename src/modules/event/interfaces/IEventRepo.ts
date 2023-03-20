@@ -6,4 +6,5 @@ export interface IEventRepo {
   getByOrganizerUuid(organizerUuid: string, scopes?: string[]): Promise<IEvent | null>
   updateByUuid(uuid: string, updates: IUpdateEventData): Promise<number[]>
   deleteByUuid(uuid: string): Promise<number>
+  deleteByOrganizerUuid(organizerUuid: string): Promise<number>
 }

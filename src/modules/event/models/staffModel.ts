@@ -1,22 +1,24 @@
 /* eslint-disable no-use-before-define */
 import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model, Sequelize } from 'sequelize'
+import { randomCode } from '../../../common/util/codeUtil'
 import { uniqueId } from '../../../common/util/uuidUtil'
-import { IEvent } from '../types'
+import { StaffRole } from '../enums'
+import { IStaff } from '../types'
 
-class EventModel extends Model<InferAttributes<EventModel>, InferCreationAttributes<EventModel>> implements IEvent {
+class StaffModel extends Model<InferAttributes<StaffModel>, InferCreationAttributes<StaffModel>> implements IStaff {
   declare id: CreationOptional<number>
   declare uuid: CreationOptional<string>
-  declare organizerUuid: string
+  declare eventUuid: string
   declare name: string
-  declare location: string
-  declare date: Date
+  declare role: StaffRole
+  declare code: string
 
   declare createdAt: CreationOptional<Date>
   declare updatedAt: CreationOptional<Date>
 }
 
 export default function (sequelize: Sequelize) {
-  EventModel.init(
+  StaffModel.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -29,7 +31,7 @@ export default function (sequelize: Sequelize) {
           return uniqueId()
         }
       },
-      organizerUuid: {
+      eventUuid: {
         type: DataTypes.STRING(36),
         allowNull: false
       },
@@ -37,25 +39,28 @@ export default function (sequelize: Sequelize) {
         type: DataTypes.STRING(256),
         allowNull: false
       },
-      location: {
-        type: DataTypes.STRING(256),
+      role: {
+        type: DataTypes.ENUM(...Object.values(StaffRole)),
         allowNull: false
       },
-      date: {
-        type: DataTypes.DATE,
-        allowNull: false
+      code: {
+        type: DataTypes.STRING(8),
+        allowNull: false,
+        defaultValue: () => {
+          return randomCode()
+        }
       },
       createdAt: DataTypes.DATE,
       updatedAt: DataTypes.DATE
     },
     {
       sequelize,
-      modelName: 'Event',
-      tableName: 'events',
+      modelName: 'Staff',
+      tableName: 'event_staff',
       timestamps: true,
       freezeTableName: true
     }
   )
 
-  return EventModel
+  return StaffModel
 }

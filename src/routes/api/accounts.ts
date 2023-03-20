@@ -34,10 +34,8 @@ router.patch(
   celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
-        // Require Authorization header
         authorization: Joi.string().required()
       })
-      // Allow unknown headers
       .unknown(true),
     [Segments.BODY]: Joi.object().keys({
       updates: Joi.object()
@@ -58,10 +56,8 @@ router.delete(
   celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
-        // Require Authorization header
         authorization: Joi.string().required()
       })
-      // Allow unknown headers
       .unknown(true),
     [Segments.BODY]: Joi.object().keys({
       uuid: Joi.string().required()

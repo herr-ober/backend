@@ -27,7 +27,7 @@ class EventService implements IEventService {
   async updateEventByUuid(uuid: string, data: IUpdateEventData): Promise<number[]> {
     const affectedRows: number[] = await this.eventRepo.updateByUuid(uuid, data)
     if (!affectedRows[0]) {
-      throw new BadEventUpdateDataError('Failed to update sample - 0 rows affected')
+      throw new BadEventUpdateDataError('Failed to update event - 0 rows affected')
     }
     return affectedRows
   }
@@ -35,7 +35,7 @@ class EventService implements IEventService {
   async deleteEventByUuid(uuid: string, suppressError: boolean = false): Promise<number> {
     const affectedRows: number = await this.eventRepo.deleteByUuid(uuid)
     if (affectedRows < 0 && !suppressError) {
-      throw new BadEventDeletionDataError('Failed to delete sample - 0 rows affected')
+      throw new BadEventDeletionDataError('Failed to delete event - 0 rows affected')
     }
     return affectedRows
   }

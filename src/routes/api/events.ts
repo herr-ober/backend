@@ -11,10 +11,8 @@ router.post(
   celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
-        // Require Authorization header
         authorization: Joi.string().required()
       })
-      // Allow unknown headers
       .unknown(true),
     [Segments.BODY]: Joi.object().keys({
       name: Joi.string().required(),
@@ -31,10 +29,8 @@ router.get(
   celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
-        // Require Authorization header
         authorization: Joi.string().required()
       })
-      // Allow unknown headers
       .unknown(true)
   }),
   isAuthenticated,
@@ -46,10 +42,8 @@ router.patch(
   celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
-        // Require Authorization header
         authorization: Joi.string().required()
       })
-      // Allow unknown headers
       .unknown(true),
     [Segments.BODY]: Joi.object().keys({
       updates: Joi.object()
@@ -70,14 +64,80 @@ router.delete(
   celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
-        // Require Authorization header
         authorization: Joi.string().required()
       })
-      // Allow unknown headers
       .unknown(true)
   }),
   isAuthenticated,
   asyncHandlerDecorator(eventsController.deleteEvent)
+)
+
+router.post(
+  '/:eventUuid/staff',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true),
+    [Segments.BODY]: Joi.object().keys({
+      name: Joi.string().required(),
+      role: Joi.string().required()
+    })
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.addStaff)
+)
+
+router.get(
+  '/:eventUuid/staff',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true)
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.getStaff)
+)
+
+router.patch(
+  '/staff',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true),
+    [Segments.BODY]: Joi.object().keys({
+      uuid: Joi.string().required(),
+      updates: Joi.object()
+        .keys({
+          name: Joi.string(),
+          role: Joi.string()
+        })
+        .required()
+    })
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.updateStaff)
+)
+
+router.delete(
+  '/staff',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true),
+    [Segments.BODY]: Joi.object().keys({
+      uuid: Joi.string().required()
+    })
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.removeStaff)
 )
 
 export default router
