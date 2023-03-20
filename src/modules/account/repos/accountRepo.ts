@@ -56,10 +56,6 @@ class AccountRepo implements IAccountRepo {
     return database.Account.unscoped().findAll(parameters)
   }
 
-  async getByName(name: string, scopes?: string[]): Promise<IAccount[]> {
-    return this.getManyByCriteria({ name }, scopes)
-  }
-
   /**
    * It updates the database with the given updates, where the criteria is met
    * @param {object} criteria - object - The criteria to use to find the accounts to update.

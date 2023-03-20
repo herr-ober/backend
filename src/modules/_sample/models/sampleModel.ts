@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model, Sequelize } from 'sequelize'
-import { uniqueId } from '../../../common/helpers/uuidHelper'
+import { uniqueId } from '../../../common/util/uuidUtil'
 import { ISample } from '../types'
 
 class SampleModel extends Model<InferAttributes<SampleModel>, InferCreationAttributes<SampleModel>> implements ISample {

@@ -61,14 +61,10 @@ class AccountService implements IAccountService {
     return this.accountRepo.getByEmail(email)
   }
 
-  async getAccountsByName(name: string): Promise<IAccount[]> {
-    return this.accountRepo.getByName(name)
-  }
-
   async updateAccountByUuid(uuid: string, data: IUpdateAccountData): Promise<number[]> {
     const affectedRows: number[] = await this.accountRepo.updateByUuid(uuid, data)
     if (!affectedRows[0]) {
-      throw new BadAccountUpdateDataError('Failed to update sample - 0 rows affected')
+      throw new BadAccountUpdateDataError('Failed to update account - 0 rows affected')
     }
     return affectedRows
   }
@@ -76,7 +72,7 @@ class AccountService implements IAccountService {
   async deleteAccountByUuid(uuid: string, suppressError: boolean = false): Promise<number> {
     const affectedRows: number = await this.accountRepo.deleteByUuid(uuid)
     if (affectedRows < 0 && !suppressError) {
-      throw new BadAccountDeletionDataError('Failed to delete sample - 0 rows affected')
+      throw new BadAccountDeletionDataError('Failed to delete account - 0 rows affected')
     }
     return affectedRows
   }
