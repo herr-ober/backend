@@ -19,10 +19,10 @@ class TableRepo implements ITableRepo {
  * @param {ICreateTableData} data - ICreateTableData
  * @returns A promise of a Array of Tables
  */
-  async createMultiple(data: ICreateTableData, bulk: boolean): Promise<ITable[]> {
+  async createMultiple(data: ICreateTableData): Promise<ITable[]> {
     let initTable: ITable = { id: 0, uuid: "dummy-table", eventUuid: "0", tableNumber: 0 }
     let tableList: ITable[] = [initTable];
-    for (let i = 1; i <= data.tableNumber; i++) {
+    for (let i = 0; i <= data.tableNumber; i++) {
       data.tableNumber = i;
       tableList.push(database.Table.create(data))
     }
