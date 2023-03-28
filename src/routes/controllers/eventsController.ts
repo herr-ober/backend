@@ -2,10 +2,11 @@ import { Request, Response, NextFunction } from 'express'
 import { InternalError } from '../../errors'
 import { container } from '../../modules/dependencyContainer'
 import * as EventModule from '../../modules/event'
-import { asString } from '../../common/helpers/dataHelper'
+import { asNumber, asString } from '../../common/helpers/dataHelper'
 
 const eventService: EventModule.interfaces.IEventService = container.get(EventModule.DI_TYPES.EventService)
 const staffService: EventModule.interfaces.IStaffService = container.get(EventModule.DI_TYPES.StaffService)
+const tableService: EventModule.interfaces.ITableService = container.get(EventModule.DI_TYPES.TableService)
 
 async function createEvent(req: Request, res: Response, next: NextFunction) {
   const organizerUuid: string = asString(req.auth!.uuid)
@@ -169,6 +170,71 @@ async function removeStaff(req: Request, res: Response, next: NextFunction) {
     })
 }
 
+async function addTable(req: Request, res: Response, next: NextFunction) {
+  const eventUuid: string = asString(req.params.eventUuid)
+  const tableNumber: number = asNumber(req.body.tableNumber)
+
+  return tableService
+    .createTable({ eventUuid, tableNumber})
+    .then((table: EventModule.types.ITable) => {
+      return res.status(200).json({ table: { uuid: table.uuid, tableNumber: table.tableNumber } })
+    })
+    .catch((error: Error) => {
+      logger.error('Add single table error', { error })
+      throw new InternalError('Failed to add singel table')
+    })
+}
+
+async function addMultipleTable(req: Request, res: Response, next: NextFunction) {
+  const eventUuid: string = asString(req.params.eventUuid)
+  const tableNumber: number = asNumber(req.body.tableNumber)
+
+  return tableService
+    .createMultipleTable({ eventUuid, tableNumber})
+    .then((tables: EventModule.types.ITable[]) => {
+      const tableArray = tables.map((table) => {
+      return { uuid: table.uuid, tableNumber: table.tableNumber };
+    });
+    return res.status(200).json({ tables: tableArray });
+  })
+    .catch((error: Error) => {
+      logger.error('Add multiple table error', { error })
+      throw new InternalError('Failed to add multiple table')
+    })
+}
+
+async function getTables(req: Request, res: Response, next: NextFunction) {
+  const eventUuid: string = asString(req.params.eventUuid)
+
+  return tableService
+    .getAllTableByEventUuid(eventUuid)
+    .then((tableList: EventModule.types.ITable[] | null) => {
+      return res.status(200).json({ tableList })
+    })
+    .catch((error: Error) => {
+      logger.error('Table retrieval error', { error })
+      throw new InternalError('Failed to retrieve table')
+    })
+}
+
+async function removeTable(req: Request, res: Response, next: NextFunction) {
+  const uuid: string = req.body.uuid
+
+  return tableService
+    .deleteTableByUuid(uuid)
+    .then(() => {
+      return res.status(204).send()
+    })
+    .catch((error: Error) => {
+      if (error instanceof EventModule.errors.BadStaffDeletionDataError) {
+        next(error)
+      } else {
+        logger.error('Table deletion error', { error })
+        throw new InternalError('Failed to delete Table')
+      }
+    })
+}
+
 export default {
   createEvent,
   getEvent,
@@ -177,5 +243,9 @@ export default {
   addStaff,
   getStaff,
   updateStaff,
-  removeStaff
+  removeStaff,
+  addTable,
+  addMultipleTable,
+  getTables,
+  removeTable
 }

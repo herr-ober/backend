@@ -140,4 +140,65 @@ router.delete(
   asyncHandlerDecorator(eventsController.removeStaff)
 )
 
+router.post(
+  '/:eventUuid/table',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true),
+    [Segments.BODY]: Joi.object().keys({
+      tableNumber: Joi.number().required()
+    })
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.addTable)
+)
+
+router.post(
+  '/:eventUuid/table/bulk',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true),
+    [Segments.BODY]: Joi.object().keys({
+      tableNumber: Joi.number().required()
+    })
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.addMultipleTable)
+)
+
+router.get(
+  '/:eventUuid/table',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true)
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.getTables)
+)
+
+router.delete(
+  '/:eventUuid/table',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true),
+    [Segments.BODY]: Joi.object().keys({
+      uuid: Joi.string().required()
+    })
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.removeTable)
+)
+
 export default router
