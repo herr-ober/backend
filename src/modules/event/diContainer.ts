@@ -2,10 +2,21 @@ import { container } from '../dependencyContainer'
 import { DI_TYPES } from './diTypes'
 
 // binding module injectable things to global DI container
-import { IEventRepo, IEventService, IStaffRepo, IStaffService } from './interfaces'
+import {
+  ICategoryRepo,
+  IEventRepo,
+  IEventService,
+  IProductRepo,
+  IProductService,
+  IStaffRepo,
+  IStaffService
+} from './interfaces'
+import CategoryRepo from './repos/categoryRepo'
 import EventRepo from './repos/eventRepo'
+import ProductRepo from './repos/productRepo'
 import StaffRepo from './repos/staffRepo'
 import EventService from './services/eventService'
+import ProductService from './services/productService'
 import StaffService from './services/staffService'
 
 // we bind both private and public services as well as Repos to the global container
@@ -15,5 +26,9 @@ container.bind<IEventService>(DI_TYPES.EventService).to(EventService)
 
 container.bind<IStaffRepo>(DI_TYPES.StaffRepo).to(StaffRepo)
 container.bind<IStaffService>(DI_TYPES.StaffService).to(StaffService)
+
+container.bind<ICategoryRepo>(DI_TYPES.CategoryRepo).to(CategoryRepo)
+container.bind<IProductRepo>(DI_TYPES.ProductRepo).to(ProductRepo)
+container.bind<IProductService>(DI_TYPES.ProductService).to(ProductService)
 
 export default container

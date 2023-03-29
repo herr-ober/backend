@@ -140,4 +140,64 @@ router.delete(
   asyncHandlerDecorator(eventsController.removeStaff)
 )
 
+router.get(
+  '/products/categories',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true)
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.getCategories)
+)
+
+router.post(
+  '/:eventUuid/products',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true),
+    [Segments.BODY]: Joi.object().keys({
+      categoryUuid: Joi.string().required(),
+      name: Joi.string().required(),
+      price: Joi.number().required()
+    })
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.createProduct)
+)
+
+router.get(
+  '/:eventUuid/products/:productUuid',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true)
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.getProduct)
+)
+
+router.get(
+  '/:eventUuid/products',
+  celebrate({
+    [Segments.QUERY]: Joi.object().keys({
+      category: Joi.string()
+    }),
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true)
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.getProducts)
+)
+
 export default router

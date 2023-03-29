@@ -33,7 +33,7 @@ const sequelize: Sequelize = new Sequelize(databaseName, username, password, {
   }
 })
 
-const modelFiles = glob.sync(path.join(__dirname, '/', '**/*Model.*s'))
+const modelFiles = glob.sync(path.join(__dirname, '**', '*Model.*s').replaceAll(/\\/g, '/'))
 
 modelFiles.forEach((file: string) => {
   // since `modelFiles` and consequently `files` don't depend on user input, we can safely require these dynamic files

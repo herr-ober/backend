@@ -6,6 +6,7 @@ import { asString } from '../../common/helpers/dataHelper'
 
 const eventService: EventModule.interfaces.IEventService = container.get(EventModule.DI_TYPES.EventService)
 const staffService: EventModule.interfaces.IStaffService = container.get(EventModule.DI_TYPES.StaffService)
+const productService: EventModule.interfaces.IProductService = container.get(EventModule.DI_TYPES.ProductService)
 
 async function createEvent(req: Request, res: Response, next: NextFunction) {
   const organizerUuid: string = asString(req.auth!.uuid)
@@ -16,7 +17,7 @@ async function createEvent(req: Request, res: Response, next: NextFunction) {
   return eventService
     .createEvent({ organizerUuid, name, location, date })
     .then((event: EventModule.types.IEvent) => {
-      return res.status(200).json({ event: { uuid: event.uuid, name: event.name } })
+      return res.status(201).json({ uuid: event.uuid, name: event.name })
     })
     .catch((error: Error) => {
       logger.error('Event creation error', { error })
@@ -33,9 +34,7 @@ async function getEvent(req: Request, res: Response, next: NextFunction) {
       if (!event)
         throw new EventModule.errors.EventNotFoundError('Cannot find event associated to requesting organizer')
 
-      return res
-        .status(200)
-        .json({ event: { uuid: event.uuid, name: event.name, location: event.location, date: event.date } })
+      return res.status(200).json({ uuid: event.uuid, name: event.name, location: event.location, date: event.date })
     })
     .catch((error: Error) => {
       if (error instanceof EventModule.errors.EventNotFoundError) {
@@ -110,7 +109,7 @@ async function addStaff(req: Request, res: Response, next: NextFunction) {
   return staffService
     .createStaff({ eventUuid, name, role })
     .then((staff: EventModule.types.IStaff) => {
-      return res.status(200).json({ staff: { uuid: staff.uuid, code: staff.code } })
+      return res.status(201).json({ uuid: staff.uuid, code: staff.code })
     })
     .catch((error: Error) => {
       logger.error('Add staff error', { error })
@@ -169,6 +168,84 @@ async function removeStaff(req: Request, res: Response, next: NextFunction) {
     })
 }
 
+async function getCategories(req: Request, res: Response, next: NextFunction) {
+  return productService
+    .getCategories()
+    .then((categories: EventModule.types.ICategory[]) => {
+      return res.status(200).json({ categoryList: categories })
+    })
+    .catch((error: Error) => {
+      logger.error('Product categories retrieval error', { error })
+      throw new InternalError('Failed to retrieve product categories')
+    })
+}
+
+async function createProduct(req: Request, res: Response, next: NextFunction) {
+  const eventUuid: string = asString(req.params.eventUuid)
+  const categoryUuid: string = req.body.categoryUuid
+  const name: string = req.body.name
+  const price: number = req.body.price
+
+  return productService
+    .createProduct({ eventUuid, categoryUuid, name, price })
+    .then((product: EventModule.types.IProduct) => {
+      return res.status(201).json({ uuid: product.uuid })
+    })
+    .catch((error: Error) => {
+      logger.error('Create product error', { error })
+      throw new InternalError('Failed to create product')
+    })
+}
+
+async function getProduct(req: Request, res: Response, next: NextFunction) {
+  const uuid: string = asString(req.params.productUuid)
+
+  return productService
+    .getProductByUuid(uuid)
+    .then((product: EventModule.types.IProduct | null) => {
+      if (!product) throw new EventModule.errors.ProductNotFoundError('Cannot find requested product')
+
+      return res
+        .status(200)
+        .json({ uuid: product.uuid, categoryUuid: product.categoryUuid, name: product.name, price: product.price })
+    })
+    .catch((error: Error) => {
+      if (error instanceof EventModule.errors.ProductNotFoundError) {
+        next(error)
+      } else {
+        logger.error('Product retrieval error', { error })
+        throw new InternalError('Failed to retrieve product')
+      }
+    })
+}
+
+async function getProducts(req: Request, res: Response, next: NextFunction) {
+  const eventUuid: string = asString(req.params.eventUuid)
+  const categoryUuid: string | undefined = req.query.category as string | undefined
+
+  if (!categoryUuid) {
+    return productService
+      .getProductsByEventUuid(eventUuid)
+      .then((productList: EventModule.types.IProduct[]) => {
+        return res.status(200).json({ productList })
+      })
+      .catch((error: Error) => {
+        logger.error('Products retrieval error', { error })
+        throw new InternalError('Failed to retrieve products')
+      })
+  }
+
+  return productService
+    .getProductsByCategory(eventUuid, categoryUuid)
+    .then((productList: EventModule.types.IProduct[]) => {
+      return res.status(200).json({ productList })
+    })
+    .catch((error: Error) => {
+      logger.error('Products retrieval error', { error })
+      throw new InternalError('Failed to retrieve products')
+    })
+}
+
 export default {
   createEvent,
   getEvent,
@@ -177,5 +254,9 @@ export default {
   addStaff,
   getStaff,
   updateStaff,
-  removeStaff
+  removeStaff,
+  getCategories,
+  createProduct,
+  getProduct,
+  getProducts
 }
