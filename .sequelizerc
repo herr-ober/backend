@@ -7,5 +7,6 @@ dotenv.config({ path: path.resolve(__dirname, '.env') })
 module.exports = {
   'config': path.resolve('db/config', 'config.js'),
   'models-path': path.resolve('src', 'modules'),
-  'migrations-path': path.resolve('db', 'migrations')
+  'migrations-path': path.resolve('db', 'migrations'),
+  'seeders-path': path.resolve('db', 'seeds')
 };
