@@ -20,11 +20,12 @@ class TableRepo implements ITableRepo {
  * @returns A promise of a Array of Tables
  */
   async createMultiple(data: ICreateTableData): Promise<ITable[]> {
-    let initTable: ITable = { id: 0, uuid: "dummy-table", eventUuid: "0", tableNumber: 0 }
-    let tableList: ITable[] = [initTable];
-    for (let i = 0; i <= data.tableNumber; i++) {
+    let tableList: ITable[] = [];
+    let amount = data.tableNumber
+    for (let i = 1; i <= amount; i++) {
       data.tableNumber = i;
-      tableList.push(database.Table.create(data))
+      console.log(data.tableNumber)
+      tableList.push(await database.Table.create(data))
     }
     return tableList
   }
@@ -76,12 +77,12 @@ class TableRepo implements ITableRepo {
 
   async deleteByUuid(uuid: string): Promise<number> {
     return this.delete({
-      where: uuid
+      uuid
     })
   }
   async deleteByEventUuid(eventUuid: string): Promise<number> {
     return this.delete({
-      where: eventUuid
+      eventUuid
     })
   }
 
