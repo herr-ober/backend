@@ -106,6 +106,7 @@ dist
 
 # Database files
 sequelize-meta.json
+sequelize-data.json
 
 # System Files
 .DS_Store
