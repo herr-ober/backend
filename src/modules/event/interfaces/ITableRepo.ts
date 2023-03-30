@@ -1,4 +1,4 @@
-import { ICreateTableData, ITable} from '../types'
+import { ICreateTableData, ITable } from '../types'
 
 export interface ITableRepo {
   create(data: ICreateTableData): Promise<ITable>

@@ -2,7 +2,6 @@ import { injectable } from 'inversify'
 import { ITableRepo } from '../interfaces'
 import database from '../../databaseModels'
 import { ICreateTableData, ITable } from '../types'
-import { table } from 'console'
 
 @injectable()
 class TableRepo implements ITableRepo {
@@ -14,16 +13,17 @@ class TableRepo implements ITableRepo {
   async create(data: ICreateTableData): Promise<ITable> {
     return database.Table.create(data)
   }
+
   /**
- * It creates multiple new tables in the database
- * @param {ICreateTableData} data - ICreateTableData
- * @returns A promise of a Array of Tables
- */
+   * It creates multiple new tables in the database
+   * @param {ICreateTableData} data - ICreateTableData
+   * @returns A promise of a Array of Tables
+   */
   async createMultiple(data: ICreateTableData): Promise<ITable[]> {
-    let tableList: ITable[] = [];
-    let amount = data.tableNumber
+    const tableList: ITable[] = []
+    const amount = data.tableNumber
     for (let i = 1; i <= amount; i++) {
-      data.tableNumber = i;
+      data.tableNumber = i
       console.log(data.tableNumber)
       tableList.push(await database.Table.create(data))
     }
@@ -51,14 +51,11 @@ class TableRepo implements ITableRepo {
     return this.get({ tableNumber })
   }
 
-
-
   /**
    * It returns a promise of an array of Table objects
    * @param {object} eventUuid
    * @returns An array of Table objects
    */
-
 
   async getAllByEventUuid(eventUuid: string): Promise<ITable[] | null> {
     return database.Table.findAll()
@@ -80,12 +77,12 @@ class TableRepo implements ITableRepo {
       uuid
     })
   }
+
   async deleteByEventUuid(eventUuid: string): Promise<number> {
     return this.delete({
       eventUuid
     })
   }
-
 }
 
 export default TableRepo

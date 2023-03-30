@@ -3,7 +3,6 @@ import { InternalError } from '../../errors'
 import { container } from '../../modules/dependencyContainer'
 import * as AccountModule from '../../modules/account'
 import { asString } from '../../common/helpers/dataHelper'
-import { generateHash, verifyPassword } from '../../common/util/hashingUtil'
 
 const accountService: AccountModule.interfaces.IAccountService = container.get(AccountModule.DI_TYPES.AccountService)
 

@@ -7,4 +7,3 @@ export * from './IProductRepo'
 export * from './IProductService'
 export * from './ITableService'
 export * from './ITableRepo'
-

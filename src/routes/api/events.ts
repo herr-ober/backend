@@ -153,7 +153,6 @@ router.get(
   asyncHandlerDecorator(eventsController.getCategories)
 )
 
-
 router.post(
   '/:eventUuid/products',
   celebrate({
@@ -163,13 +162,13 @@ router.post(
       })
       .unknown(true),
     [Segments.BODY]: Joi.object().keys({
-  categoryUuid: Joi.string().required(),
-  name: Joi.string().required(),
-  price: Joi.number().required()
-})
-}),
-isAuthenticated,
-asyncHandlerDecorator(eventsController.createProduct)
+      categoryUuid: Joi.string().required(),
+      name: Joi.string().required(),
+      price: Joi.number().required()
+    })
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.createProduct)
 )
 
 router.get(
@@ -183,23 +182,23 @@ router.get(
   }),
   isAuthenticated,
   asyncHandlerDecorator(eventsController.getProduct)
-  )
+)
 
-  router.post(
-    '/:eventUuid/table',
-    celebrate({
-      [Segments.HEADERS]: Joi.object()
-        .keys({
-          authorization: Joi.string().required()
-        })
-        .unknown(true),
-      [Segments.BODY]: Joi.object().keys({
-        tableNumber: Joi.number().required()
+router.post(
+  '/:eventUuid/table',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
       })
-    }),
-    isAuthenticated,
-    asyncHandlerDecorator(eventsController.addTable)
-  )
+      .unknown(true),
+    [Segments.BODY]: Joi.object().keys({
+      tableNumber: Joi.number().required()
+    })
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.addTable)
+)
 
 router.post(
   '/:eventUuid/table/bulk',
@@ -228,7 +227,7 @@ router.get(
   }),
   isAuthenticated,
   asyncHandlerDecorator(eventsController.getTables)
-  )
+)
 
 router.get(
   '/:eventUuid/products',

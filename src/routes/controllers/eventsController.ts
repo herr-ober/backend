@@ -174,7 +174,7 @@ async function addTable(req: Request, res: Response, next: NextFunction) {
   const tableNumber: number = asNumber(req.body.tableNumber)
 
   return tableService
-    .createTable({ eventUuid, tableNumber})
+    .createTable({ eventUuid, tableNumber })
     .then((table: EventModule.types.ITable) => {
       return res.status(200).json({ table: { uuid: table.uuid, tableNumber: table.tableNumber } })
     })
@@ -184,18 +184,18 @@ async function addTable(req: Request, res: Response, next: NextFunction) {
     })
 }
 
-async function addMultipleTable(req: Request, res: Response, next: NextFunction) {
+async function addMultipleTables(req: Request, res: Response, next: NextFunction) {
   const eventUuid: string = asString(req.params.eventUuid)
   const tableNumber: number = asNumber(req.body.tableNumber)
 
   return tableService
-    .createMultipleTable({ eventUuid, tableNumber})
+    .createMultipleTables({ eventUuid, tableNumber })
     .then((tables: EventModule.types.ITable[]) => {
       const tableArray = tables.map((table) => {
-      return { uuid: table.uuid, tableNumber: table.tableNumber };
-    });
-    return res.status(200).json({ tables: tableArray });
-  })
+        return { uuid: table.uuid, tableNumber: table.tableNumber }
+      })
+      return res.status(200).json({ tables: tableArray })
+    })
     .catch((error: Error) => {
       logger.error('Add multiple table error', { error })
       throw new InternalError('Failed to add multiple table')
@@ -341,7 +341,7 @@ export default {
   getProducts,
   deleteProduct,
   getTables,
-  addMultipleTable,
+  addMultipleTables,
   addTable,
   removeTable
 }
