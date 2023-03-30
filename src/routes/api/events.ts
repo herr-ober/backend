@@ -200,4 +200,20 @@ router.get(
   asyncHandlerDecorator(eventsController.getProducts)
 )
 
+router.delete(
+  '/products',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true),
+    [Segments.BODY]: Joi.object().keys({
+      uuid: Joi.string().required()
+    })
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.deleteProduct)
+)
+
 export default router

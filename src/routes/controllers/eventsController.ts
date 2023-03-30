@@ -246,6 +246,20 @@ async function getProducts(req: Request, res: Response, next: NextFunction) {
     })
 }
 
+async function deleteProduct(req: Request, res: Response, next: NextFunction) {
+  const uuid: string = req.body.uuid
+
+  return productService
+    .deleteProductByUuid(uuid)
+    .then(() => {
+      return res.status(204).send()
+    })
+    .catch((error: Error) => {
+      logger.error('Product removal error', { error })
+      throw new InternalError('Failed to remove product')
+    })
+}
+
 export default {
   createEvent,
   getEvent,
@@ -258,5 +272,6 @@ export default {
   getCategories,
   createProduct,
   getProduct,
-  getProducts
+  getProducts,
+  deleteProduct
 }
