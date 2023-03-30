@@ -153,6 +153,7 @@ router.get(
   asyncHandlerDecorator(eventsController.getCategories)
 )
 
+
 router.post(
   '/:eventUuid/products',
   celebrate({
