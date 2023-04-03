@@ -28,7 +28,7 @@ class TableService implements ITableService {
     return this.tableRepo.getByNumber(number)
   }
 
-  async getAllTableByEventUuid(eventUuid: string): Promise<ITable[] | null> {
+  async getAllTablesByEventUuid(eventUuid: string): Promise<ITable[] | null> {
     return this.tableRepo.getAllByEventUuid(eventUuid)
   }
 
@@ -40,8 +40,8 @@ class TableService implements ITableService {
     return affectedRows
   }
 
-  async deleteAllTableByEventUuid(uuid: string, suppressError: boolean = false): Promise<number> {
-    const affectedRows: number = await this.tableRepo.deleteByEventUuid(uuid)
+  async deleteAllTablesByEventUuid(uuid: string, suppressError: boolean = false): Promise<number> {
+    const affectedRows: number = await this.tableRepo.deleteAllByEventUuid(uuid)
     if (affectedRows < 0 && !suppressError) {
       throw new BadTableDeletionDataError('Failed to delete Table - 0 rows affected')
     }

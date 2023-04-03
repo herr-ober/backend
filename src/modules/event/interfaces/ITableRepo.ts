@@ -7,5 +7,5 @@ export interface ITableRepo {
   getByNumber(number: number): Promise<ITable | null>
   getAllByEventUuid(eventUuid: string): Promise<ITable[] | null>
   deleteByUuid(uuid: string): Promise<number>
-  deleteByEventUuid(eventUuid: string): Promise<number>
+  deleteAllByEventUuid(eventUuid: string): Promise<number>
 }

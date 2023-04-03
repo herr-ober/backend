@@ -206,7 +206,7 @@ async function getTables(req: Request, res: Response, next: NextFunction) {
   const eventUuid: string = asString(req.params.eventUuid)
 
   return tableService
-    .getAllTableByEventUuid(eventUuid)
+    .getAllTablesByEventUuid(eventUuid)
     .then((tableList: EventModule.types.ITable[] | null) => {
       return res.status(200).json({ tableList })
     })

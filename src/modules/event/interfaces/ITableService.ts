@@ -5,6 +5,6 @@ export interface ITableService {
   createMultipleTables(data: ICreateTableData): Promise<ITable[]>
   getTableByUuid(uuid: string): Promise<ITable | null>
   getTableByNumber(number: number): Promise<ITable | null>
-  getAllTableByEventUuid(eventUuid: string): Promise<ITable[] | null>
+  getAllTablesByEventUuid(eventUuid: string): Promise<ITable[] | null>
   deleteTableByUuid(uuid: string, suppressError?: boolean): Promise<number>
 }
