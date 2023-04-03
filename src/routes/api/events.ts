@@ -140,13 +140,9 @@ router.delete(
   asyncHandlerDecorator(eventsController.removeStaff)
 )
 
-
 router.get(
-  '/:eventUuid/products',
+  '/products/categories',
   celebrate({
-    [Segments.QUERY]: Joi.object().keys({
-      category: Joi.string()
-    }),
     [Segments.HEADERS]: Joi.object()
       .keys({
         authorization: Joi.string().required()
@@ -154,26 +150,8 @@ router.get(
       .unknown(true)
   }),
   isAuthenticated,
-  asyncHandlerDecorator(eventsController.getProducts)
+  asyncHandlerDecorator(eventsController.getCategories)
 )
-
-router.delete(
-  '/products',
-  celebrate({
-    [Segments.HEADERS]: Joi.object()
-      .keys({
-        authorization: Joi.string().required()
-      })
-      .unknown(true),
-    [Segments.BODY]: Joi.object().keys({
-      uuid: Joi.string().required()
-    })
-  }),
-  isAuthenticated,
-  asyncHandlerDecorator(eventsController.deleteProduct)
-)
-
-
 
 router.post(
   '/:eventUuid/products',
@@ -194,7 +172,23 @@ router.post(
 )
 
 router.get(
-  '/:eventUuid/products/:productUuid',
+  '/:eventUuid/products',
+  celebrate({
+    [Segments.QUERY]: Joi.object().keys({
+      category: Joi.string()
+    }),
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true)
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.getProducts)
+)
+
+router.get(
+  '/products/:productUuid',
   celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
@@ -205,21 +199,25 @@ router.get(
   isAuthenticated,
   asyncHandlerDecorator(eventsController.getProduct)
 )
-router.get(
-  '/products/categories',
+
+router.delete(
+  '/products',
   celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
         authorization: Joi.string().required()
       })
-      .unknown(true)
+      .unknown(true),
+    [Segments.BODY]: Joi.object().keys({
+      uuid: Joi.string().required()
+    })
   }),
   isAuthenticated,
-  asyncHandlerDecorator(eventsController.getCategories)
+  asyncHandlerDecorator(eventsController.deleteProduct)
 )
 
 router.post(
-  '/:eventUuid/table',
+  '/:eventUuid/tables',
   celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
@@ -235,7 +233,7 @@ router.post(
 )
 
 router.post(
-  '/:eventUuid/table/bulk',
+  '/:eventUuid/tables/bulk',
   celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
@@ -251,7 +249,7 @@ router.post(
 )
 
 router.get(
-  '/:eventUuid/table',
+  '/:eventUuid/tables',
   celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
@@ -263,9 +261,8 @@ router.get(
   asyncHandlerDecorator(eventsController.getTables)
 )
 
-
 router.delete(
-  '/:eventUuid/table',
+  '/:eventUuid/tables',
   celebrate({
     [Segments.HEADERS]: Joi.object()
       .keys({
