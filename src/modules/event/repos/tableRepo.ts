@@ -13,10 +13,10 @@ class TableRepo implements ITableRepo {
   async create(data: ICreateTableData): Promise<ITable> {
     const table = await database.Table.findOrCreate({
       where: { eventUuid: data.eventUuid, tableNumber: data.tableNumber },
-      defaults: data,
-    });
+      defaults: data
+    })
 
-    return table[0]  /** table[1] could be used to return the information, that the table already exists*/
+    return table[0] /** table[1] could be used to return the information, that the table already exists */
   }
 
   /**
@@ -25,25 +25,25 @@ class TableRepo implements ITableRepo {
    * @returns A promise of a Array of Tables
    */
   async createMultiple(data: ICreateTableData): Promise<ITable[]> {
-    const tableList: ITable[] = [];
-    const amount = data.tableNumber;
-  
+    const tableList: ITable[] = []
+    const amount = data.tableNumber
+
     for (let i = 1; i <= amount; i++) {
-      data.tableNumber = i;
-      console.log(data.tableNumber);
-  
+      data.tableNumber = i
+      console.log(data.tableNumber)
+
       // Find or create a table with the provided data
       const [table, created] = await database.Table.findOrCreate({
         where: { eventUuid: data.eventUuid, tableNumber: data.tableNumber },
-        defaults: data,
-      });
-  
+        defaults: data
+      })
+
       // If the table was created, add it to the tableList
       if (created) {
-        tableList.push(table);
+        tableList.push(table)
       }
     }
-    return tableList;
+    return tableList
   }
 
   /**
