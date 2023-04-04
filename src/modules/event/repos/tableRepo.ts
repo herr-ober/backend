@@ -6,12 +6,17 @@ import { ICreateTableData, ITable } from '../types'
 @injectable()
 class TableRepo implements ITableRepo {
   /**
-   * It creates a new tables in the database
+   * It creates a new table in the database if it doesn't exist already
    * @param {ICreateTableData} data - ICreateTableData
    * @returns A promise of a Table object
    */
   async create(data: ICreateTableData): Promise<ITable> {
-    return database.Table.create(data)
+    const table = await database.Table.findOrCreate({
+      where: { eventUuid: data.eventUuid, tableNumber: data.tableNumber },
+      defaults: data
+    })
+
+    return table[0] /** table[1] could be used to return the information, that the table already exists */
   }
 
   /**
@@ -22,10 +27,20 @@ class TableRepo implements ITableRepo {
   async createMultiple(data: ICreateTableData): Promise<ITable[]> {
     const tableList: ITable[] = []
     const amount = data.tableNumber
+
     for (let i = 1; i <= amount; i++) {
       data.tableNumber = i
-      console.log(data.tableNumber)
-      tableList.push(await database.Table.create(data))
+
+      // Find or create a table with the provided data
+      const [table, created] = await database.Table.findOrCreate({
+        where: { eventUuid: data.eventUuid, tableNumber: data.tableNumber },
+        defaults: data
+      })
+
+      // If the table was created, add it to the tableList
+      if (created) {
+        tableList.push(table)
+      }
     }
     return tableList
   }
