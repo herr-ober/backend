@@ -30,7 +30,6 @@ class TableRepo implements ITableRepo {
 
     for (let i = 1; i <= amount; i++) {
       data.tableNumber = i
-      console.log(data.tableNumber)
 
       // Find or create a table with the provided data
       const [table, created] = await database.Table.findOrCreate({
