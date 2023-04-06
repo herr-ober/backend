@@ -88,7 +88,7 @@ class ProductRepo implements IProductRepo {
     return this.delete({ uuid })
   }
 
-  async deleteByEventUuid(eventUuid: string): Promise<number> {
+  async deleteAllByEventUuid(eventUuid: string): Promise<number> {
     return this.delete({ eventUuid })
   }
 }

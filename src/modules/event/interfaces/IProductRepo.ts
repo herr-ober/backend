@@ -6,5 +6,5 @@ export interface IProductRepo {
   getAllByEventUuid(eventUuid: string, scopes?: string[]): Promise<IProduct[]>
   getAllByCategoryUuid(eventUuid: string, categoryUuid: string, scopes?: string[]): Promise<IProduct[]>
   deleteByUuid(uuid: string): Promise<number>
-  deleteByEventUuid(eventUuid: string): Promise<number>
+  deleteAllByEventUuid(eventUuid: string): Promise<number>
 }
