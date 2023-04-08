@@ -68,8 +68,8 @@ class OrderPositionRepo implements IOrderPositionRepo {
     return database.OrderPosition.unscoped().findAll(parameters)
   }
 
-  async getAllByOrderUuid(eventUuid: string, scopes?: string[]): Promise<IOrderPosition[]> {
-    return this.getManyByCriteria({ eventUuid }, scopes)
+  async getAllByOrderUuid(orderUuid: string, scopes?: string[]): Promise<IOrderPosition[]> {
+    return this.getManyByCriteria({ orderUuid }, scopes)
   }
 
   async getAllByStatus(status: OrderStatus, scopes?: string[]): Promise<IOrderPosition[]> {

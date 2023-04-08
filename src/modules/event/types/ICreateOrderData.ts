@@ -3,6 +3,6 @@ import { ICreateOrderPositionData } from './ICreateOrderPositionData'
 export interface ICreateOrderData {
   eventUuid: string
   staffUuid: string
-  tableNumber: number
+  tableUuid: string
   positions: ICreateOrderPositionData[]
 }

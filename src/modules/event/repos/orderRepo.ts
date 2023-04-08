@@ -76,8 +76,8 @@ class OrderRepo implements IOrderRepo {
     return this.getManyByCriteria({ eventUuid }, scopes)
   }
 
-  async getAllByStatus(status: OrderStatus, scopes?: string[]): Promise<IOrder[]> {
-    return this.getManyByCriteria({ status }, scopes)
+  async getAllByStatus(eventUuid: string, status: OrderStatus, scopes?: string[]): Promise<IOrder[]> {
+    return this.getManyByCriteria({ eventUuid, status }, scopes)
   }
 
   /**

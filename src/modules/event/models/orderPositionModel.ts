@@ -42,7 +42,7 @@ export default function (sequelize: Sequelize) {
         allowNull: false
       },
       amount: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         allowNull: false
       },
       status: {

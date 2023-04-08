@@ -4,7 +4,7 @@ import { ICreateOrderPositionData, IOrderPosition, IUpdateOrderPositionData } fr
 export interface IOrderPositionRepo {
   create(data: ICreateOrderPositionData): Promise<IOrderPosition>
   getByUuid(uuid: string, scopes?: string[]): Promise<IOrderPosition | null>
-  getAllByOrderUuid(eventUuid: string, scopes?: string[]): Promise<IOrderPosition[]>
+  getAllByOrderUuid(orderUuid: string, scopes?: string[]): Promise<IOrderPosition[]>
   getAllByStatus(status: OrderStatus, scopes?: string[]): Promise<IOrderPosition[]>
   updateByUuid(uuid: string, updates: IUpdateOrderPositionData): Promise<number[]>
   deleteByUuid(uuid: string): Promise<number>
