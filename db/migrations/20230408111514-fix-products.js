@@ -2,13 +2,13 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    queryInterface.removeConstraint('products', 'unique')
+    return queryInterface.removeConstraint('products', 'eventUuid')
   },
 
   async down(queryInterface, Sequelize) {
-    queryInterface.addConstraint('products', ['eventUuid'], {
+    return queryInterface.addConstraint('products', ['eventUuid'], {
       type: 'unique',
-      name: 'eventUuid-unique-constraint'
+      name: 'eventUuid_unique_constraint'
     })
   }
 }
