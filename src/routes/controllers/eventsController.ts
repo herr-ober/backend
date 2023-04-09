@@ -251,7 +251,7 @@ async function getCategories(req: Request, res: Response, next: NextFunction) {
 async function createProduct(req: Request, res: Response, next: NextFunction) {
   const eventUuid: string = asString(req.params.eventUuid)
   const categoryUuid: string = req.body.categoryUuid
-  const name: string = req.body.name
+  const name: string = asString(req.body.name).trim()
   const price: number = req.body.price
 
   return productService
@@ -260,8 +260,12 @@ async function createProduct(req: Request, res: Response, next: NextFunction) {
       return res.status(201).json({ uuid: product.uuid })
     })
     .catch((error: Error) => {
-      logger.error('Create product error', { error })
-      throw new InternalError('Failed to create product')
+      if (error instanceof EventModule.errors.ProductAlreadyExistsError) {
+        next(error)
+      } else {
+        logger.error('Create product error', { error })
+        throw new InternalError('Failed to create product')
+      }
     })
 }
 
