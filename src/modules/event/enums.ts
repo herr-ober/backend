@@ -4,4 +4,15 @@ enum StaffRole {
   KITCHEN = 'kitchen'
 }
 
-export { StaffRole }
+enum OrderStatus {
+  NEW = 'new',
+  PREPARATION = 'preparation',
+  COMPLETED = 'completed'
+}
+
+enum OrderPositionStatus {
+  WAITING = 'waiting',
+  DELIVERED = 'delivered'
+}
+
+export { StaffRole, OrderStatus, OrderPositionStatus }

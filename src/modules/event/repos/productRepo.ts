@@ -35,6 +35,10 @@ class ProductRepo implements IProductRepo {
     return this.getOneByCriteria({ uuid }, scopes)
   }
 
+  async getByName(name: string, scopes?: string[]): Promise<IProduct | null> {
+    return this.getOneByCriteria({ name }, scopes)
+  }
+
   /**
    * It returns a list of products that match the criteria
    * @param {object} criteria - object - The criteria to search for.
@@ -88,7 +92,7 @@ class ProductRepo implements IProductRepo {
     return this.delete({ uuid })
   }
 
-  async deleteByEventUuid(eventUuid: string): Promise<number> {
+  async deleteAllByEventUuid(eventUuid: string): Promise<number> {
     return this.delete({ eventUuid })
   }
 }

@@ -7,5 +7,5 @@ export interface IStaffRepo {
   getAllByEventUuid(eventUuid: string, scopes?: string[]): Promise<IStaff[]>
   updateByUuid(uuid: string, updates: IUpdateStaffData): Promise<number[]>
   deleteByUuid(uuid: string): Promise<number>
-  deleteByEventUuid(eventUuid: string): Promise<number>
+  deleteAllByEventUuid(eventUuid: string): Promise<number>
 }

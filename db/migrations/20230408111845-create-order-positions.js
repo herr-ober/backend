@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.createTable('products', {
+    return queryInterface.createTable('order_positions', {
       id: {
         type: Sequelize.DataTypes.INTEGER,
         autoIncrement: true,
@@ -16,21 +16,21 @@ module.exports = {
         unique: true,
         allowNull: false
       },
-      eventUuid: {
+      orderUuid: {
         type: Sequelize.DataTypes.STRING(36),
         primaryKey: true,
         allowNull: false
       },
-      categoryUuid: {
+      productUuid: {
         type: Sequelize.DataTypes.STRING(36),
         allowNull: false
       },
-      name: {
-        type: Sequelize.DataTypes.STRING(256),
+      amount: {
+        type: Sequelize.DataTypes.INTEGER,
         allowNull: false
       },
-      price: {
-        type: Sequelize.DataTypes.DOUBLE(7, 2),
+      status: {
+        type: Sequelize.DataTypes.STRING(24),
         allowNull: false
       },
       createdAt: Sequelize.DataTypes.DATE,
@@ -39,6 +39,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.dropTable('products')
+    return queryInterface.dropTable('order_positions')
   }
 }

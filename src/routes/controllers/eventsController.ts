@@ -3,11 +3,13 @@ import { InternalError } from '../../errors'
 import { container } from '../../modules/dependencyContainer'
 import * as EventModule from '../../modules/event'
 import { asNumber, asString } from '../../common/helpers/dataHelper'
+import { OrderStatus } from 'src/modules/event/enums'
 
 const eventService: EventModule.interfaces.IEventService = container.get(EventModule.DI_TYPES.EventService)
 const staffService: EventModule.interfaces.IStaffService = container.get(EventModule.DI_TYPES.StaffService)
 const productService: EventModule.interfaces.IProductService = container.get(EventModule.DI_TYPES.ProductService)
 const tableService: EventModule.interfaces.ITableService = container.get(EventModule.DI_TYPES.TableService)
+const orderService: EventModule.interfaces.IOrderService = container.get(EventModule.DI_TYPES.OrderService)
 
 async function createEvent(req: Request, res: Response, next: NextFunction) {
   const organizerUuid: string = asString(req.auth!.uuid)
@@ -267,7 +269,7 @@ async function getCategories(req: Request, res: Response, next: NextFunction) {
 async function createProduct(req: Request, res: Response, next: NextFunction) {
   const eventUuid: string = asString(req.params.eventUuid)
   const categoryUuid: string = req.body.categoryUuid
-  const name: string = req.body.name
+  const name: string = asString(req.body.name).trim()
   const price: number = req.body.price
 
   return productService
@@ -276,8 +278,12 @@ async function createProduct(req: Request, res: Response, next: NextFunction) {
       return res.status(201).json({ uuid: product.uuid })
     })
     .catch((error: Error) => {
-      logger.error('Create product error', { error })
-      throw new InternalError('Failed to create product')
+      if (error instanceof EventModule.errors.ProductAlreadyExistsError) {
+        next(error)
+      } else {
+        logger.error('Create product error', { error })
+        throw new InternalError('Failed to create product')
+      }
     })
 }
 
@@ -344,6 +350,167 @@ async function deleteProduct(req: Request, res: Response, next: NextFunction) {
     })
 }
 
+async function createOrder(req: Request, res: Response, next: NextFunction) {
+  const eventUuid: string = asString(req.params.eventUuid)
+  const staffUuid: string = asString(req.auth!.uuid)
+  const tableUuid: string = req.body.tableUuid
+  const positions: EventModule.types.ICreateOrderPositionData[] = req.body.positions
+
+  return orderService
+    .createOrder({ eventUuid, staffUuid, tableUuid, positions })
+    .then((order: EventModule.types.IOrder) => {
+      return res.status(201).json({ orderUuid: order.uuid })
+    })
+    .catch((error: Error) => {
+      logger.error('Order creation error', { error })
+      throw new InternalError('Failed to create order')
+    })
+}
+
+async function getOrders(req: Request, res: Response, next: NextFunction) {
+  const eventUuid: string = asString(req.params.eventUuid)
+
+  return orderService
+    .getOrdersByEventUuid(eventUuid)
+    .then(async (orders: EventModule.types.IOrder[]) => {
+      const orderList: object[] = []
+
+      for (const order of orders) {
+        const positions: EventModule.types.IOrderPosition[] = await orderService.getOrderPositions(order.uuid)
+
+        orderList.push({
+          orderUuid: order.uuid,
+          staffUuid: order.staffUuid,
+          tableUuid: order.tableUuid,
+          paid: order.paid,
+          status: order.status,
+          positions
+        })
+      }
+
+      return res.status(200).json(orderList)
+    })
+    .catch((error: Error) => {
+      logger.error('Order retrieval error', { error })
+      throw new InternalError('Failed to retrieve orders')
+    })
+}
+
+async function getOrdersByStatus(req: Request, res: Response, next: NextFunction) {
+  const eventUuid: string = asString(req.params.eventUuid)
+  const status: OrderStatus = asString(req.params.status) as OrderStatus
+
+  return orderService
+    .getOrdersByStatus(eventUuid, status)
+    .then(async (orders: EventModule.types.IOrder[]) => {
+      const orderList: object[] = []
+
+      for (const order of orders) {
+        const positions: EventModule.types.IOrderPosition[] = await orderService.getOrderPositions(order.uuid)
+
+        orderList.push({
+          orderUuid: order.uuid,
+          staffUuid: order.staffUuid,
+          tableUuid: order.tableUuid,
+          paid: order.paid,
+          status: order.status,
+          positions
+        })
+      }
+
+      return res.status(200).json(orderList)
+    })
+    .catch((error: Error) => {
+      logger.error('Order retrieval error', { error })
+      throw new InternalError('Failed to retrieve orders by status')
+    })
+}
+
+async function getOrder(req: Request, res: Response, next: NextFunction) {
+  const orderUuid: string = asString(req.params.orderUuid)
+
+  return orderService
+    .getOrderByUuid(orderUuid)
+    .then(async (order: EventModule.types.IOrder | null) => {
+      if (!order) throw new EventModule.errors.OrderNotFoundError('Requested order does not exist')
+      const positions: EventModule.types.IOrderPosition[] = await orderService.getOrderPositions(order.uuid)
+
+      return res.status(200).json({
+        uuid: order.uuid,
+        eventUuid: order.eventUuid,
+        staffUuid: order.staffUuid,
+        tableUuid: order.tableUuid,
+        paid: order.paid,
+        status: order.status,
+        positions
+      })
+    })
+    .catch((error: Error) => {
+      if (error instanceof EventModule.errors.OrderNotFoundError) {
+        next(error)
+      } else {
+        logger.error('Order retrieval error', { error })
+        throw new InternalError('Failed to retrieve order')
+      }
+    })
+}
+
+async function updateOrder(req: Request, res: Response, next: NextFunction) {
+  const orderUuid: string = req.body.uuid
+  const updates: EventModule.types.IUpdateOrderData = req.body.updates
+
+  return orderService
+    .updateOrderByUuid(orderUuid, updates)
+    .then(() => {
+      return res.status(204).send()
+    })
+    .catch((error: Error) => {
+      if (error instanceof EventModule.errors.BadOrderUpdateDataError) {
+        next(error)
+      } else {
+        logger.error('Order update error', { error })
+        throw new InternalError('Failed to update order')
+      }
+    })
+}
+
+async function updateOrderPosition(req: Request, res: Response, next: NextFunction) {
+  const orderPositionUuid: string = req.body.uuid
+  const updates: EventModule.types.IUpdateOrderPositionData = req.body.updates
+
+  return orderService
+    .updateOrderPositionByUuid(orderPositionUuid, updates)
+    .then(() => {
+      return res.status(204).send()
+    })
+    .catch((error: Error) => {
+      if (error instanceof EventModule.errors.BadOrderPositionUpdateDataError) {
+        next(error)
+      } else {
+        logger.error('Order position update error', { error })
+        throw new InternalError('Failed to update order position')
+      }
+    })
+}
+
+async function deleteOrder(req: Request, res: Response, next: NextFunction) {
+  const orderUuid: string = req.body.uuid
+
+  return orderService
+    .deleteOrderByUuid(orderUuid)
+    .then(() => {
+      return res.status(204).send()
+    })
+    .catch((error: Error) => {
+      if (error instanceof EventModule.errors.BadOrderDeletionDataError) {
+        next(error)
+      } else {
+        logger.error('Order deletion error', { error })
+        throw new InternalError('Failed to delete order')
+      }
+    })
+}
+
 export default {
   createEvent,
   getEvent,
@@ -362,5 +529,12 @@ export default {
   getTables,
   addMultipleTables,
   addTable,
-  removeTable
+  removeTable,
+  createOrder,
+  getOrders,
+  getOrdersByStatus,
+  getOrder,
+  updateOrder,
+  updateOrderPosition,
+  deleteOrder
 }

@@ -321,4 +321,118 @@ router.delete(
   asyncHandlerDecorator(eventsController.removeTable)
 )
 
+router.post(
+  '/:eventUuid/orders',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true),
+    [Segments.BODY]: Joi.object().keys({
+      tableUuid: Joi.string().required(),
+      positions: Joi.array().required()
+    })
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.createOrder)
+)
+
+router.get(
+  '/:eventUuid/orders',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true)
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.getOrders)
+)
+
+router.get(
+  '/:eventUuid/orders/:status',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true)
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.getOrdersByStatus)
+)
+
+router.get(
+  '/orders/:orderUuid',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true)
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.getOrder)
+)
+
+router.patch(
+  '/orders',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true),
+    [Segments.BODY]: Joi.object().keys({
+      uuid: Joi.string().required(),
+      updates: Joi.object()
+        .keys({
+          paid: Joi.boolean(),
+          status: Joi.string()
+        })
+        .required()
+    })
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.updateOrder)
+)
+router.patch(
+  '/orders/positions',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true),
+    [Segments.BODY]: Joi.object().keys({
+      uuid: Joi.string().required(),
+      updates: Joi.object()
+        .keys({
+          status: Joi.string()
+        })
+        .required()
+    })
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.updateOrderPosition)
+)
+
+router.delete(
+  '/orders',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true),
+    [Segments.BODY]: Joi.object().keys({
+      uuid: Joi.string().required()
+    })
+  }),
+  isAuthenticated,
+  asyncHandlerDecorator(eventsController.deleteOrder)
+)
+
 export default router
