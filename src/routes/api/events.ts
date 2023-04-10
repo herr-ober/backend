@@ -21,7 +21,9 @@ router.post(
       date: Joi.date().required()
     })
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.createEvent)
 )
 
@@ -34,7 +36,9 @@ router.get(
       })
       .unknown(true)
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.getEvent)
 )
 
@@ -56,7 +60,9 @@ router.patch(
         .required()
     })
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.updateEvent)
 )
 
@@ -69,7 +75,9 @@ router.delete(
       })
       .unknown(true)
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.deleteEvent)
 )
 
@@ -86,7 +94,9 @@ router.post(
       role: Joi.string().required()
     })
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.addStaff)
 )
 router.post(
@@ -108,7 +118,9 @@ router.get(
       })
       .unknown(true)
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.getStaff)
 )
 
@@ -130,7 +142,9 @@ router.patch(
         .required()
     })
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.updateStaff)
 )
 
@@ -146,7 +160,9 @@ router.delete(
       uuid: Joi.string().required()
     })
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.removeStaff)
 )
 
@@ -159,7 +175,9 @@ router.get(
       })
       .unknown(true)
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.KITCHEN, TokenIssuer.WAITER], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.getCategories)
 )
 
@@ -177,7 +195,9 @@ router.post(
       price: Joi.number().required()
     })
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.createProduct)
 )
 
@@ -193,7 +213,9 @@ router.get(
       })
       .unknown(true)
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.KITCHEN, TokenIssuer.WAITER], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.getProducts)
 )
 
@@ -206,7 +228,9 @@ router.get(
       })
       .unknown(true)
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.KITCHEN], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.getProduct)
 )
 
@@ -222,7 +246,9 @@ router.delete(
       uuid: Joi.string().required()
     })
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.KITCHEN], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.deleteProduct)
 )
 
@@ -239,7 +265,7 @@ router.post(
     })
   }),
   async (req, res, next) => {
-    await isAuthenticated([TokenIssuer.KITCHEN], req, res, next)
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.WAITER], req, res, next)
   },
   asyncHandlerDecorator(eventsController.addTable)
 )
@@ -256,7 +282,9 @@ router.post(
       tableNumber: Joi.number().required()
     })
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.WAITER], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.addMultipleTables)
 )
 
@@ -269,7 +297,9 @@ router.get(
       })
       .unknown(true)
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.WAITER, TokenIssuer.KITCHEN], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.getTables)
 )
 
@@ -285,7 +315,9 @@ router.delete(
       uuid: Joi.string().required()
     })
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.WAITER], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.removeTable)
 )
 
