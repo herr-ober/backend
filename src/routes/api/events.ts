@@ -3,6 +3,7 @@ import { Router } from 'express'
 import asyncHandlerDecorator from '../../common/util/asyncHandlerDecorator'
 import eventsController from '../controllers/eventsController'
 import { isAuthenticated } from '../middlewares/authMiddleware'
+import { TokenIssuer } from '../../common/enums'
 
 const router: Router = Router()
 
@@ -87,6 +88,15 @@ router.post(
   }),
   isAuthenticated,
   asyncHandlerDecorator(eventsController.addStaff)
+)
+router.post(
+  '/:eventUuid/staff/login',
+  celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      code: Joi.string().required()
+    })
+  }),
+  asyncHandlerDecorator(eventsController.authStaffCode)
 )
 
 router.get(
@@ -228,7 +238,9 @@ router.post(
       tableNumber: Joi.number().required()
     })
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.KITCHEN], req, res, next);
+  },
   asyncHandlerDecorator(eventsController.addTable)
 )
 

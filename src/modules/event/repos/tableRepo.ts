@@ -15,8 +15,12 @@ class TableRepo implements ITableRepo {
       where: { eventUuid: data.eventUuid, tableNumber: data.tableNumber },
       defaults: data
     })
-
-    return table[0] /** table[1] could be used to return the information, that the table already exists */
+    if (table[1]){
+      return table[0]
+    }
+    else{
+      throw new Error("Tisch existiert bereits")
+    }
   }
 
   /**
