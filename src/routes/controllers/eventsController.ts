@@ -182,7 +182,7 @@ async function addTable(req: Request, res: Response, next: NextFunction) {
     })
     .catch((error: Error) => {
       logger.error('Add single table error', { error })
-      throw new InternalError('Failed to add singel table')
+      throw new InternalError('Failed to add singel table', error.message)
     })
 }
 
