@@ -3,7 +3,6 @@ import { InternalError } from '../../errors'
 import { container } from '../../modules/dependencyContainer'
 import * as EventModule from '../../modules/event'
 import { asNumber, asString } from '../../common/helpers/dataHelper'
-import * as StaffModule from '../../modules/event'
 
 const eventService: EventModule.interfaces.IEventService = container.get(EventModule.DI_TYPES.EventService)
 const staffService: EventModule.interfaces.IStaffService = container.get(EventModule.DI_TYPES.StaffService)
@@ -128,7 +127,7 @@ async function authStaffCode(req: Request, res: Response, next: NextFunction) {
       return res.status(200).json({ token })
     })
     .catch((error: Error) => {
-      if (error instanceof StaffModule.errors.InvalidAuthCodeDataError) {
+      if (error instanceof EventModule.errors.InvalidAuthCodeDataError) {
         next(error)
       } else {
         logger.error('Code auth error', { error })

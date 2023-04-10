@@ -15,11 +15,10 @@ class TableRepo implements ITableRepo {
       where: { eventUuid: data.eventUuid, tableNumber: data.tableNumber },
       defaults: data
     })
-    if (table[1]){
+    if (table[1]) {
       return table[0]
-    }
-    else{
-      throw new Error("Tisch existiert bereits")
+    } else {
+      throw new Error('Tisch existiert bereits')
     }
   }
 

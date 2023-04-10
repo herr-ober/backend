@@ -5,7 +5,7 @@ import { IStaffRepo, IStaffService } from '../interfaces'
 import { ICreateStaffData, IStaff, IUpdateEventData, IAuthCodeData } from '../types'
 import * as jose from 'jose'
 import { addTime } from '../../../common/helpers/dateHelper'
-import { generateToken} from '../../../common/util/tokenUtil'
+import { generateToken } from '../../../common/util/tokenUtil'
 import { TokenIssuer } from '../../../common/enums'
 import { InvalidAuthCodeDataError } from '../errors/InvalidAuthCodeDataError'
 
@@ -25,8 +25,8 @@ class StaffService implements IStaffService {
     const staff: IStaff | null = await this.getStaffByCode(data.code)
     if (!staff) throw new InvalidAuthCodeDataError('Code is not assigned to a staff')
 
-    switch(staff.role){
-      case "waiter":{
+    switch (staff.role) {
+      case 'waiter': {
         const payload: jose.JWTPayload = {
           iss: TokenIssuer.WAITER,
           sub: staff.uuid,
@@ -34,7 +34,7 @@ class StaffService implements IStaffService {
         }
         return generateToken(payload)
       }
-      case "kitchen":{
+      case 'kitchen': {
         const payload: jose.JWTPayload = {
           iss: TokenIssuer.KITCHEN,
           sub: staff.uuid,
@@ -42,12 +42,10 @@ class StaffService implements IStaffService {
         }
         return generateToken(payload)
       }
-      default:{
+      default: {
         throw new Error('Invalid role name')
       }
     }
-    
-    
   }
 
   async getStaffByUuid(uuid: string): Promise<IStaff | null> {

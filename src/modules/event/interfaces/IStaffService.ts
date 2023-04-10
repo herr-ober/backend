@@ -1,5 +1,4 @@
 import { IAuthCodeData, ICreateStaffData, IStaff, IUpdateEventData } from '../types'
-import { IStaffRepo } from './IStaffRepo'
 
 export interface IStaffService {
   createStaff(data: ICreateStaffData): Promise<IStaff>

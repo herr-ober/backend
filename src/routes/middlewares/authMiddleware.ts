@@ -11,14 +11,13 @@ import { container } from '../../modules/dependencyContainer'
 const accountService: AccountModule.interfaces.IAccountService = container.get(AccountModule.DI_TYPES.AccountService)
 const staffService: EventModule.interfaces.IStaffService = container.get(EventModule.DI_TYPES.StaffService)
 
-async function isAuthenticated(allowedIssuers:TokenIssuer[], req: Request, res: Response, next: NextFunction) {
+async function isAuthenticated(allowedIssuers: TokenIssuer[], req: Request, res: Response, next: NextFunction) {
   const token: string | null = checkAuthorizationHeader(req)
   if (!token) return next(new UnauthorizedError('Invalid token'))
 
   const payload: jose.JWTPayload = await verifyToken(token)
   if (!payload) return next(new UnauthorizedError('Invalid token'))
 
-  
   const uuid: string = payload.sub!
   req.auth = {
     uuid,
@@ -31,7 +30,7 @@ async function isAuthenticated(allowedIssuers:TokenIssuer[], req: Request, res: 
       if (!account) return next(new UnauthorizedError('Invalid token'))
 
       if (!allowedIssuers.includes(payload.iss!)) {
-        return next(new UnauthorizedError('Issuer not allowed for this route'));
+        return next(new UnauthorizedError('Issuer not allowed for this route'))
       }
 
       req.auth.issuer = TokenIssuer.ACCOUNT
@@ -42,7 +41,7 @@ async function isAuthenticated(allowedIssuers:TokenIssuer[], req: Request, res: 
       if (!staff) return next(new UnauthorizedError('Invalid token'))
 
       if (!allowedIssuers.includes(payload.iss!)) {
-        return next(new UnauthorizedError('Issuer not allowed for this route'));
+        return next(new UnauthorizedError('Issuer not allowed for this route'))
       }
 
       req.auth.issuer = TokenIssuer.KITCHEN
@@ -53,7 +52,7 @@ async function isAuthenticated(allowedIssuers:TokenIssuer[], req: Request, res: 
       if (!staff) return next(new UnauthorizedError('Invalid token'))
 
       if (!allowedIssuers.includes(payload.iss!)) {
-        return next(new UnauthorizedError('Issuer not allowed for this route'));
+        return next(new UnauthorizedError('Issuer not allowed for this route'))
       }
 
       req.auth.issuer = TokenIssuer.WAITER

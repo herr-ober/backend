@@ -239,7 +239,7 @@ router.post(
     })
   }),
   async (req, res, next) => {
-    await isAuthenticated([TokenIssuer.KITCHEN], req, res, next);
+    await isAuthenticated([TokenIssuer.KITCHEN], req, res, next)
   },
   asyncHandlerDecorator(eventsController.addTable)
 )
