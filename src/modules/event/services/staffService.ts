@@ -8,6 +8,7 @@ import { addTime } from '../../../common/helpers/dateHelper'
 import { generateToken } from '../../../common/util/tokenUtil'
 import { TokenIssuer } from '../../../common/enums'
 import { InvalidAuthCodeDataError } from '../errors/InvalidAuthCodeDataError'
+import { StaffRole } from '../enums'
 
 @injectable()
 class StaffService implements IStaffService {
@@ -26,7 +27,7 @@ class StaffService implements IStaffService {
     if (!staff) throw new InvalidAuthCodeDataError('Code is not assigned to a staff')
 
     switch (staff.role) {
-      case 'waiter': {
+      case StaffRole.WAITER: {
         const payload: jose.JWTPayload = {
           iss: TokenIssuer.WAITER,
           sub: staff.uuid,
@@ -34,7 +35,7 @@ class StaffService implements IStaffService {
         }
         return generateToken(payload)
       }
-      case 'kitchen': {
+      case StaffRole.KITCHEN: {
         const payload: jose.JWTPayload = {
           iss: TokenIssuer.KITCHEN,
           sub: staff.uuid,

@@ -2,6 +2,7 @@ import { injectable } from 'inversify'
 import { ITableRepo } from '../interfaces'
 import database from '../../databaseModels'
 import { ICreateTableData, ITable } from '../types'
+import {BadTableCreationDataError} from '../errors'
 
 @injectable()
 class TableRepo implements ITableRepo {
@@ -18,7 +19,7 @@ class TableRepo implements ITableRepo {
     if (table[1]) {
       return table[0]
     } else {
-      throw new Error('Tisch existiert bereits')
+      throw new BadTableCreationDataError('Tisch existiert bereits')
     }
   }
 
