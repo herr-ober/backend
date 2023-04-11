@@ -43,6 +43,12 @@ npm run migrate               // Run migrations on database
 npm run migration:create      // Create new migration in codebase
 ```
 
+#### Seed database (creates default categories)
+```bash
+npm run seeders               // Run seeders on database
+npm run seed:create           // Create new seed in codebase
+```
+
 #### Start for development
 ```bash
 npm start
