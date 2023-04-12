@@ -12,6 +12,7 @@ enum OrderStatus {
 
 enum OrderPositionStatus {
   WAITING = 'waiting',
+  READY = 'ready',
   DELIVERED = 'delivered'
 }
 
