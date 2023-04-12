@@ -35,8 +35,8 @@ class ProductRepo implements IProductRepo {
     return this.getOneByCriteria({ uuid }, scopes)
   }
 
-  async getByName(name: string, scopes?: string[]): Promise<IProduct | null> {
-    return this.getOneByCriteria({ name }, scopes)
+  async getByNameAndEvent(eventUuid: string, name: string, scopes?: string[]): Promise<IProduct | null> {
+    return this.getOneByCriteria({ eventUuid, name }, scopes)
   }
 
   /**
