@@ -361,6 +361,7 @@ async function getOrders(req: Request, res: Response, next: NextFunction) {
         const positions: EventModule.types.IOrderPosition[] = await orderService.getOrderPositions(order.uuid)
 
         orderList.push({
+          orderId: order.id,
           orderUuid: order.uuid,
           staffUuid: order.staffUuid,
           tableUuid: order.tableUuid,
@@ -391,6 +392,7 @@ async function getOrdersByStatus(req: Request, res: Response, next: NextFunction
         const positions: EventModule.types.IOrderPosition[] = await orderService.getOrderPositions(order.uuid)
 
         orderList.push({
+          orderId: order.id,
           orderUuid: order.uuid,
           staffUuid: order.staffUuid,
           tableUuid: order.tableUuid,
@@ -418,6 +420,7 @@ async function getOrder(req: Request, res: Response, next: NextFunction) {
       const positions: EventModule.types.IOrderPosition[] = await orderService.getOrderPositions(order.uuid)
 
       return res.status(200).json({
+        id: order.id,
         uuid: order.uuid,
         eventUuid: order.eventUuid,
         staffUuid: order.staffUuid,
