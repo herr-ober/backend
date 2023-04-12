@@ -100,7 +100,7 @@ router.post(
   asyncHandlerDecorator(eventsController.addStaff)
 )
 router.post(
-  '/:eventUuid/staff/login',
+  '/staff/login',
   celebrate({
     [Segments.BODY]: Joi.object().keys({
       code: Joi.string().required()
