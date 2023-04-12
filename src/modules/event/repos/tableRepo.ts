@@ -73,7 +73,11 @@ class TableRepo implements ITableRepo {
    */
 
   async getAllByEventUuid(eventUuid: string): Promise<ITable[] | null> {
-    return database.Table.findAll()
+    return database.Table.findAll({
+      where: {
+        eventUuid
+      }
+    })
   }
 
   /**
