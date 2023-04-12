@@ -36,7 +36,7 @@ class ProductService implements IProductService {
     const category: ICategory | null = await this.categoryRepo.getByUuid(data.categoryUuid)
     if (!category) throw new CategoryNotFoundError('Cannot find provided category')
 
-    const existing: IProduct | null = await this.productRepo.getByName(data.name)
+    const existing: IProduct | null = await this.productRepo.getByNameAndEvent(data.eventUuid, data.name)
     if (existing) throw new ProductAlreadyExistsError('A product with this name already exists')
 
     return this.productRepo.create(data)
