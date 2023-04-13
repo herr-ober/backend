@@ -120,6 +120,24 @@ async function addStaff(req: Request, res: Response, next: NextFunction) {
     })
 }
 
+async function authStaffCode(req: Request, res: Response, next: NextFunction) {
+  const code: string = req.body.code
+
+  return staffService
+    .authStaffCode({ code })
+    .then((token: string) => {
+      return res.status(200).json({ token })
+    })
+    .catch((error: Error) => {
+      if (error instanceof EventModule.errors.InvalidAuthCodeDataError) {
+        next(error)
+      } else {
+        logger.error('Code auth error', { error })
+        throw new InternalError('Failed to authenticate by staff code')
+      }
+    })
+}
+
 async function getStaff(req: Request, res: Response, next: NextFunction) {
   const eventUuid: string = asString(req.params.eventUuid)
 
@@ -182,7 +200,7 @@ async function addTable(req: Request, res: Response, next: NextFunction) {
     })
     .catch((error: Error) => {
       logger.error('Add single table error', { error })
-      throw new InternalError('Failed to add singel table')
+      throw new InternalError('Failed to add singel table', error.message)
     })
 }
 
@@ -502,6 +520,7 @@ export default {
   updateEvent,
   deleteEvent,
   addStaff,
+  authStaffCode,
   getStaff,
   updateStaff,
   removeStaff,
