@@ -4,8 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.createTable('event_tables', {
       id: {
-        type: Sequelize.DataTypes.INTEGER,
-        autoIncrement: true,
+        type: Sequelize.DataTypes.STRING(36),
         primaryKey: true,
         unique: true,
         allowNull: false

@@ -16,9 +16,13 @@ export default function (sequelize: Sequelize) {
   TableModel.init(
     {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         primaryKey: true,
-        autoIncrement: true
+        unique: true,
+        allowNull: false,
+        defaultValue: () => {
+          return uniqueId()
+        }
       },
       uuid: {
         type: DataTypes.STRING(36),
