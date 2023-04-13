@@ -2,13 +2,7 @@ import { inject, injectable } from 'inversify'
 import { DI_TYPES } from '../diTypes'
 import { BadStaffUpdateDataError, BadStaffDeletionDataError } from '../errors'
 import { IStaffRepo, IStaffService } from '../interfaces'
-import { ICreateStaffData, IStaff, IUpdateEventData, IAuthCodeData } from '../types'
-import * as jose from 'jose'
-import { addTime } from '../../../common/helpers/dateHelper'
-import { generateToken } from '../../../common/util/tokenUtil'
-import { TokenIssuer } from '../../../common/enums'
-import { InvalidAuthCodeDataError } from '../errors/InvalidAuthCodeDataError'
-import { StaffRole } from '../enums'
+import { ICreateStaffData, IStaff, IUpdateEventData } from '../types'
 
 @injectable()
 class StaffService implements IStaffService {
@@ -20,33 +14,6 @@ class StaffService implements IStaffService {
 
   async createStaff(data: ICreateStaffData): Promise<IStaff> {
     return this.staffRepo.create(data)
-  }
-
-  async authStaffCode(data: IAuthCodeData): Promise<string> {
-    const staff: IStaff | null = await this.getStaffByCode(data.code)
-    if (!staff) throw new InvalidAuthCodeDataError('Code is not assigned to a staff')
-
-    switch (staff.role) {
-      case StaffRole.WAITER: {
-        const payload: jose.JWTPayload = {
-          iss: TokenIssuer.WAITER,
-          sub: staff.uuid,
-          exp: addTime('1d').getTime()
-        }
-        return generateToken(payload)
-      }
-      case StaffRole.KITCHEN: {
-        const payload: jose.JWTPayload = {
-          iss: TokenIssuer.KITCHEN,
-          sub: staff.uuid,
-          exp: addTime('1d').getTime()
-        }
-        return generateToken(payload)
-      }
-      default: {
-        throw new Error('Invalid role name')
-      }
-    }
   }
 
   async getStaffByUuid(uuid: string): Promise<IStaff | null> {
