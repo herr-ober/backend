@@ -36,18 +36,18 @@ class TableRepo implements ITableRepo {
       data.tableNumber = i
 
       // Find or create a table with the provided data
-      const [table, created] = await database.Table.findOrCreate({
+      let table = await database.Table.findOne({
         where: { eventUuid: data.eventUuid, tableNumber: data.tableNumber },
-        defaults: data
-      })
+      });
 
-      // If the table was created, add it to the tableList
-      if (created) {
+      if (!table) {
+        table = await database.Table.create(data);
         tableList.push(table)
       }
     }
     return tableList
   }
+
 
   /**
    * It returns a Table object that matches the uuid or tablenumber passed in
