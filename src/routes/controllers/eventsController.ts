@@ -3,7 +3,8 @@ import { InternalError } from '../../errors'
 import { container } from '../../modules/dependencyContainer'
 import * as EventModule from '../../modules/event'
 import { asNumber, asString } from '../../common/helpers/dataHelper'
-import { OrderStatus } from 'src/modules/event/enums'
+import { OrderStatus, StaffRole } from 'src/modules/event/enums'
+import { IGetStaff } from 'src/modules/event/types'
 
 const eventService: EventModule.interfaces.IEventService = container.get(EventModule.DI_TYPES.EventService)
 const staffService: EventModule.interfaces.IStaffService = container.get(EventModule.DI_TYPES.StaffService)
@@ -125,8 +126,8 @@ async function authStaffCode(req: Request, res: Response, next: NextFunction) {
 
   return staffService
     .authStaffCode({ code })
-    .then((token: string) => {
-      return res.status(200).json({ token })
+    .then(({name, role, token}: IGetStaff) => {
+      return res.status(200).json({name, role, token })
     })
     .catch((error: Error) => {
       if (error instanceof EventModule.errors.InvalidAuthCodeDataError) {
