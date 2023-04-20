@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify'
 import { DI_TYPES } from '../diTypes'
 import { BadStaffUpdateDataError, BadStaffDeletionDataError } from '../errors'
 import { IStaffRepo, IStaffService } from '../interfaces'
-import { ICreateStaffData, IStaff, IUpdateEventData, IAuthCodeData } from '../types'
+import { ICreateStaffData, IStaff, IGetStaff, IUpdateEventData, IAuthCodeData } from '../types'
 import * as jose from 'jose'
 import { addTime } from '../../../common/helpers/dateHelper'
 import { generateToken } from '../../../common/util/tokenUtil'
@@ -22,7 +22,7 @@ class StaffService implements IStaffService {
     return this.staffRepo.create(data)
   }
 
-  async authStaffCode(data: IAuthCodeData): Promise<string> {
+  async authStaffCode(data: IAuthCodeData): Promise<IGetStaff> {
     const staff: IStaff | null = await this.getStaffByCode(data.code)
     if (!staff) throw new InvalidAuthCodeDataError('Code is not assigned to a staff')
 
@@ -33,7 +33,11 @@ class StaffService implements IStaffService {
           sub: staff.uuid,
           exp: addTime('1d').getTime()
         }
-        return generateToken(payload)
+        return {
+          name: staff.name,
+          role: staff.role,
+          token: await generateToken(payload)
+        }
       }
       case StaffRole.KITCHEN: {
         const payload: jose.JWTPayload = {
@@ -41,7 +45,11 @@ class StaffService implements IStaffService {
           sub: staff.uuid,
           exp: addTime('1d').getTime()
         }
-        return generateToken(payload)
+        return {
+          name: staff.name,
+          role: staff.role,
+          token: await generateToken(payload)
+        }
       }
       default: {
         throw new Error('Invalid role name')
