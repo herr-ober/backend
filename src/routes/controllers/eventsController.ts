@@ -5,6 +5,7 @@ import * as EventModule from '../../modules/event'
 import { asNumber, asString } from '../../common/helpers/dataHelper'
 import { OrderStatus } from 'src/modules/event/enums'
 import { IGetStaff } from 'src/modules/event/types'
+import { StaffNotFoundError } from 'src/modules/event/errors'
 
 const eventService: EventModule.interfaces.IEventService = container.get(EventModule.DI_TYPES.EventService)
 const staffService: EventModule.interfaces.IStaffService = container.get(EventModule.DI_TYPES.StaffService)
@@ -140,6 +141,26 @@ async function authStaffCode(req: Request, res: Response, next: NextFunction) {
 }
 
 async function getStaff(req: Request, res: Response, next: NextFunction) {
+  const staffUuid: string = asString(req.params.staffUuid)
+
+  return staffService
+    .getStaffByUuid(staffUuid)
+    .then((staff: EventModule.types.IStaff | null) => {
+      if (!staff) throw new StaffNotFoundError('Staff does not exist')
+
+      return res.status(200).json(staff)
+    })
+    .catch((error: Error) => {
+      if (error instanceof EventModule.errors.StaffNotFoundError) {
+        next(error)
+      } else {
+        logger.error('Staff retrieval error', { error })
+        throw new InternalError('Failed to retrieve staff by uuid')
+      }
+    })
+}
+
+async function getAllStaff(req: Request, res: Response, next: NextFunction) {
   const eventUuid: string = asString(req.params.eventUuid)
 
   return staffService
@@ -530,6 +551,7 @@ export default {
   addStaff,
   authStaffCode,
   getStaff,
+  getAllStaff,
   updateStaff,
   removeStaff,
   getCategories,
