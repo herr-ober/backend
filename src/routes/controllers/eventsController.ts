@@ -126,8 +126,8 @@ async function authStaffCode(req: Request, res: Response, next: NextFunction) {
 
   return staffService
     .authStaffCode({ code })
-    .then(({name, role, token}: IGetStaff) => {
-      return res.status(200).json({name, role, token })
+    .then(({uuid, name, role, token}: IGetStaff) => {
+      return res.status(200).json({uuid, name, role, token })
     })
     .catch((error: Error) => {
       if (error instanceof EventModule.errors.InvalidAuthCodeDataError) {

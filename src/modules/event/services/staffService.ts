@@ -34,6 +34,7 @@ class StaffService implements IStaffService {
           exp: addTime('1d').getTime()
         }
         return {
+          uuid: staff.uuid,
           name: staff.name,
           role: staff.role,
           token: await generateToken(payload)
@@ -46,6 +47,7 @@ class StaffService implements IStaffService {
           exp: addTime('1d').getTime()
         }
         return {
+          uuid: staff.uuid,
           name: staff.name,
           role: staff.role,
           token: await generateToken(payload)
