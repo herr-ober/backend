@@ -5,4 +5,5 @@ export interface ICreateOrderData {
   staffUuid: string
   tableUuid: string
   positions: ICreateOrderPositionData[]
+  notes: string
 }

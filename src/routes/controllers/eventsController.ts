@@ -3,8 +3,6 @@ import { InternalError } from '../../errors'
 import { container } from '../../modules/dependencyContainer'
 import * as EventModule from '../../modules/event'
 import { asNumber, asString } from '../../common/helpers/dataHelper'
-import { OrderStatus, StaffRole } from 'src/modules/event/enums'
-import { IGetStaff } from 'src/modules/event/types'
 
 const eventService: EventModule.interfaces.IEventService = container.get(EventModule.DI_TYPES.EventService)
 const staffService: EventModule.interfaces.IStaffService = container.get(EventModule.DI_TYPES.StaffService)
@@ -140,6 +138,26 @@ async function authStaffCode(req: Request, res: Response, next: NextFunction) {
 }
 
 async function getStaff(req: Request, res: Response, next: NextFunction) {
+  const staffUuid: string = asString(req.params.staffUuid)
+
+  return staffService
+    .getStaffByUuid(staffUuid)
+    .then((staff: EventModule.types.IStaff | null) => {
+      if (!staff) throw new EventModule.errors.StaffNotFoundError('Staff does not exist')
+
+      return res.status(200).json(staff)
+    })
+    .catch((error: Error) => {
+      if (error instanceof EventModule.errors.StaffNotFoundError) {
+        next(error)
+      } else {
+        logger.error('Staff retrieval error', { error })
+        throw new InternalError('Failed to retrieve staff by uuid')
+      }
+    })
+}
+
+async function getAllStaff(req: Request, res: Response, next: NextFunction) {
   const eventUuid: string = asString(req.params.eventUuid)
 
   return staffService
@@ -279,7 +297,10 @@ async function createProduct(req: Request, res: Response, next: NextFunction) {
       return res.status(201).json({ uuid: product.uuid })
     })
     .catch((error: Error) => {
-      if (error instanceof EventModule.errors.ProductAlreadyExistsError) {
+      if (
+        error instanceof EventModule.errors.ProductAlreadyExistsError ||
+        error instanceof EventModule.errors.CategoryNotFoundError
+      ) {
         next(error)
       } else {
         logger.error('Create product error', { error })
@@ -356,9 +377,10 @@ async function createOrder(req: Request, res: Response, next: NextFunction) {
   const staffUuid: string = asString(req.auth!.uuid)
   const tableUuid: string = req.body.tableUuid
   const positions: EventModule.types.ICreateOrderPositionData[] = req.body.positions
+  const notes: string = req.body.notes || null
 
   return orderService
-    .createOrder({ eventUuid, staffUuid, tableUuid, positions })
+    .createOrder({ eventUuid, staffUuid, tableUuid, positions, notes })
     .then((order: EventModule.types.IOrder) => {
       return res.status(201).json({ orderUuid: order.uuid })
     })
@@ -386,6 +408,7 @@ async function getOrders(req: Request, res: Response, next: NextFunction) {
           tableUuid: order.tableUuid,
           paid: order.paid,
           status: order.status,
+          notes: order.notes,
           positions
         })
       }
@@ -400,7 +423,7 @@ async function getOrders(req: Request, res: Response, next: NextFunction) {
 
 async function getOrdersByStatus(req: Request, res: Response, next: NextFunction) {
   const eventUuid: string = asString(req.params.eventUuid)
-  const status: OrderStatus = asString(req.params.status) as OrderStatus
+  const status: EventModule.enums.OrderStatus = asString(req.params.status) as EventModule.enums.OrderStatus
 
   return orderService
     .getOrdersByStatus(eventUuid, status)
@@ -417,6 +440,7 @@ async function getOrdersByStatus(req: Request, res: Response, next: NextFunction
           tableUuid: order.tableUuid,
           paid: order.paid,
           status: order.status,
+          notes: order.notes,
           positions
         })
       }
@@ -446,6 +470,7 @@ async function getOrder(req: Request, res: Response, next: NextFunction) {
         tableUuid: order.tableUuid,
         paid: order.paid,
         status: order.status,
+        notes: order.notes,
         positions
       })
     })
@@ -523,6 +548,7 @@ export default {
   addStaff,
   authStaffCode,
   getStaff,
+  getAllStaff,
   updateStaff,
   removeStaff,
   getCategories,
