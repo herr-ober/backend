@@ -331,10 +331,13 @@ router.post(
       .unknown(true),
     [Segments.BODY]: Joi.object().keys({
       tableUuid: Joi.string().required(),
-      positions: Joi.array().required()
+      positions: Joi.array().required(),
+      notes: Joi.string().optional()
     })
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.WAITER], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.createOrder)
 )
 
@@ -347,7 +350,9 @@ router.get(
       })
       .unknown(true)
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.WAITER, TokenIssuer.KITCHEN], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.getOrders)
 )
 
@@ -360,7 +365,9 @@ router.get(
       })
       .unknown(true)
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.WAITER, TokenIssuer.KITCHEN], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.getOrdersByStatus)
 )
 
@@ -373,7 +380,9 @@ router.get(
       })
       .unknown(true)
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.WAITER, TokenIssuer.KITCHEN], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.getOrder)
 )
 
@@ -395,7 +404,9 @@ router.patch(
         .required()
     })
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.WAITER, TokenIssuer.KITCHEN], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.updateOrder)
 )
 router.patch(
@@ -415,7 +426,9 @@ router.patch(
         .required()
     })
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.WAITER, TokenIssuer.KITCHEN], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.updateOrderPosition)
 )
 
@@ -431,7 +444,9 @@ router.delete(
       uuid: Joi.string().required()
     })
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.WAITER, TokenIssuer.KITCHEN], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.deleteOrder)
 )
 

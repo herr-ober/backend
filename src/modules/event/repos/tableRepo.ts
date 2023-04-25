@@ -2,7 +2,7 @@ import { injectable } from 'inversify'
 import { ITableRepo } from '../interfaces'
 import database from '../../databaseModels'
 import { ICreateTableData, ITable } from '../types'
-import {BadTableCreationDataError} from '../errors'
+import { BadTableCreationDataError } from '../errors'
 
 @injectable()
 class TableRepo implements ITableRepo {
@@ -37,17 +37,16 @@ class TableRepo implements ITableRepo {
 
       // Find or create a table with the provided data
       let table = await database.Table.findOne({
-        where: { eventUuid: data.eventUuid, tableNumber: data.tableNumber },
-      });
+        where: { eventUuid: data.eventUuid, tableNumber: data.tableNumber }
+      })
 
       if (!table) {
-        table = await database.Table.create(data);
+        table = await database.Table.create(data)
         tableList.push(table)
       }
     }
     return tableList
   }
-
 
   /**
    * It returns a Table object that matches the uuid or tablenumber passed in
