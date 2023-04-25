@@ -3,7 +3,7 @@ import { InternalError } from '../../errors'
 import { container } from '../../modules/dependencyContainer'
 import * as EventModule from '../../modules/event'
 import { asNumber, asString } from '../../common/helpers/dataHelper'
-import { OrderStatus, StaffRole } from 'src/modules/event/enums'
+import { OrderStatus } from 'src/modules/event/enums'
 import { IGetStaff } from 'src/modules/event/types'
 
 const eventService: EventModule.interfaces.IEventService = container.get(EventModule.DI_TYPES.EventService)
@@ -126,8 +126,8 @@ async function authStaffCode(req: Request, res: Response, next: NextFunction) {
 
   return staffService
     .authStaffCode({ code })
-    .then(({name, role, token}: IGetStaff) => {
-      return res.status(200).json({name, role, token })
+    .then(({ name, role, token }: IGetStaff) => {
+      return res.status(200).json({ name, role, token })
     })
     .catch((error: Error) => {
       if (error instanceof EventModule.errors.InvalidAuthCodeDataError) {
@@ -279,7 +279,10 @@ async function createProduct(req: Request, res: Response, next: NextFunction) {
       return res.status(201).json({ uuid: product.uuid })
     })
     .catch((error: Error) => {
-      if (error instanceof EventModule.errors.ProductAlreadyExistsError) {
+      if (
+        error instanceof EventModule.errors.ProductAlreadyExistsError ||
+        error instanceof EventModule.errors.CategoryNotFoundError
+      ) {
         next(error)
       } else {
         logger.error('Create product error', { error })
@@ -356,9 +359,10 @@ async function createOrder(req: Request, res: Response, next: NextFunction) {
   const staffUuid: string = asString(req.auth!.uuid)
   const tableUuid: string = req.body.tableUuid
   const positions: EventModule.types.ICreateOrderPositionData[] = req.body.positions
+  const notes: string = req.body.notes || null
 
   return orderService
-    .createOrder({ eventUuid, staffUuid, tableUuid, positions })
+    .createOrder({ eventUuid, staffUuid, tableUuid, positions, notes })
     .then((order: EventModule.types.IOrder) => {
       return res.status(201).json({ orderUuid: order.uuid })
     })

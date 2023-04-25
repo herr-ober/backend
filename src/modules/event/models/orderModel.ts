@@ -12,6 +12,7 @@ class OrderModel extends Model<InferAttributes<OrderModel>, InferCreationAttribu
   declare tableUuid: string
   declare paid: CreationOptional<boolean>
   declare status: CreationOptional<string>
+  declare notes: CreationOptional<string>
 
   declare createdAt: CreationOptional<Date>
   declare updatedAt: CreationOptional<Date>
@@ -52,6 +53,11 @@ export default function (sequelize: Sequelize) {
         type: DataTypes.STRING(24),
         allowNull: false,
         defaultValue: OrderStatus.NEW
+      },
+      notes: {
+        type: DataTypes.STRING(256),
+        allowNull: true,
+        defaultValue: null
       },
       createdAt: DataTypes.DATE,
       updatedAt: DataTypes.DATE

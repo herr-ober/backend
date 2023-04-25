@@ -7,4 +7,5 @@ export interface IOrder extends IDatabaseModel {
   tableUuid: string
   paid: boolean
   status: string
+  notes: string
 }
