@@ -3,9 +3,6 @@ import { InternalError } from '../../errors'
 import { container } from '../../modules/dependencyContainer'
 import * as EventModule from '../../modules/event'
 import { asNumber, asString } from '../../common/helpers/dataHelper'
-import { OrderStatus } from 'src/modules/event/enums'
-import { IGetStaff } from 'src/modules/event/types'
-import { StaffNotFoundError } from 'src/modules/event/errors'
 
 const eventService: EventModule.interfaces.IEventService = container.get(EventModule.DI_TYPES.EventService)
 const staffService: EventModule.interfaces.IStaffService = container.get(EventModule.DI_TYPES.StaffService)
@@ -127,7 +124,7 @@ async function authStaffCode(req: Request, res: Response, next: NextFunction) {
 
   return staffService
     .authStaffCode({ code })
-    .then(({ name, role, token }: IGetStaff) => {
+    .then(({ name, role, token }: EventModule.types.IGetStaff) => {
       return res.status(200).json({ name, role, token })
     })
     .catch((error: Error) => {
@@ -146,7 +143,7 @@ async function getStaff(req: Request, res: Response, next: NextFunction) {
   return staffService
     .getStaffByUuid(staffUuid)
     .then((staff: EventModule.types.IStaff | null) => {
-      if (!staff) throw new StaffNotFoundError('Staff does not exist')
+      if (!staff) throw new EventModule.errors.StaffNotFoundError('Staff does not exist')
 
       return res.status(200).json(staff)
     })
@@ -426,7 +423,7 @@ async function getOrders(req: Request, res: Response, next: NextFunction) {
 
 async function getOrdersByStatus(req: Request, res: Response, next: NextFunction) {
   const eventUuid: string = asString(req.params.eventUuid)
-  const status: OrderStatus = asString(req.params.status) as OrderStatus
+  const status: EventModule.enums.OrderStatus = asString(req.params.status) as EventModule.enums.OrderStatus
 
   return orderService
     .getOrdersByStatus(eventUuid, status)
