@@ -390,6 +390,7 @@ async function getOrders(req: Request, res: Response, next: NextFunction) {
           tableUuid: order.tableUuid,
           paid: order.paid,
           status: order.status,
+          notes: order.notes,
           positions
         })
       }
@@ -421,6 +422,7 @@ async function getOrdersByStatus(req: Request, res: Response, next: NextFunction
           tableUuid: order.tableUuid,
           paid: order.paid,
           status: order.status,
+          notes: order.notes,
           positions
         })
       }
@@ -450,6 +452,7 @@ async function getOrder(req: Request, res: Response, next: NextFunction) {
         tableUuid: order.tableUuid,
         paid: order.paid,
         status: order.status,
+        notes: order.notes,
         positions
       })
     })
