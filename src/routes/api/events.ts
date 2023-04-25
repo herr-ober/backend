@@ -121,6 +121,21 @@ router.get(
   async (req, res, next) => {
     await isAuthenticated([TokenIssuer.ACCOUNT], req, res, next)
   },
+  asyncHandlerDecorator(eventsController.getAllStaff)
+)
+
+router.get(
+  '/staff/:staffUuid',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true)
+  }),
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.WAITER, TokenIssuer.KITCHEN], req, res, next)
+  },
   asyncHandlerDecorator(eventsController.getStaff)
 )
 
