@@ -35,6 +35,7 @@ class StaffService implements IStaffService {
         }
         return {
           uuid: staff.uuid,
+          eventUuid: staff.eventUuid,
           name: staff.name,
           role: staff.role,
           token: await generateToken(payload)
@@ -48,6 +49,7 @@ class StaffService implements IStaffService {
         }
         return {
           uuid: staff.uuid,
+          eventUuid: staff.eventUuid,
           name: staff.name,
           role: staff.role,
           token: await generateToken(payload)
