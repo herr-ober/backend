@@ -1,13 +1,12 @@
 import { inject, injectable } from 'inversify'
 import { DI_TYPES } from '../diTypes'
-import { BadStaffUpdateDataError, BadStaffDeletionDataError } from '../errors'
+import { BadStaffUpdateDataError, BadStaffDeletionDataError, InvalidAuthCodeDataError } from '../errors'
 import { IStaffRepo, IStaffService } from '../interfaces'
-import { ICreateStaffData, IStaff, IGetStaff, IUpdateEventData, IAuthCodeData } from '../types'
+import { ICreateStaffData, IStaff, IUpdateEventData, IAuthCodeData } from '../types'
 import * as jose from 'jose'
 import { addTime } from '../../../common/helpers/dateHelper'
 import { generateToken } from '../../../common/util/tokenUtil'
 import { TokenIssuer } from '../../../common/enums'
-import { InvalidAuthCodeDataError } from '../errors/InvalidAuthCodeDataError'
 import { StaffRole } from '../enums'
 
 @injectable()
@@ -22,42 +21,32 @@ class StaffService implements IStaffService {
     return this.staffRepo.create(data)
   }
 
-  async authStaffCode(data: IAuthCodeData): Promise<IGetStaff> {
+  async authStaffCode(data: IAuthCodeData): Promise<{ staff: IStaff; token: string }> {
     const staff: IStaff | null = await this.getStaffByCode(data.code)
     if (!staff) throw new InvalidAuthCodeDataError('Code is not assigned to a staff')
 
+    const payload: jose.JWTPayload = {
+      sub: staff.uuid,
+      exp: addTime('1d').getTime()
+    }
+
     switch (staff.role) {
       case StaffRole.WAITER: {
-        const payload: jose.JWTPayload = {
-          iss: TokenIssuer.WAITER,
-          sub: staff.uuid,
-          exp: addTime('1d').getTime()
-        }
-        return {
-          uuid: staff.uuid,
-          eventUuid: staff.eventUuid,
-          name: staff.name,
-          role: staff.role,
-          token: await generateToken(payload)
-        }
+        payload.iss = TokenIssuer.WAITER
+        break
       }
       case StaffRole.KITCHEN: {
-        const payload: jose.JWTPayload = {
-          iss: TokenIssuer.KITCHEN,
-          sub: staff.uuid,
-          exp: addTime('1d').getTime()
-        }
-        return {
-          uuid: staff.uuid,
-          eventUuid: staff.eventUuid,
-          name: staff.name,
-          role: staff.role,
-          token: await generateToken(payload)
-        }
+        payload.iss = TokenIssuer.KITCHEN
+        break
       }
       default: {
         throw new Error('Invalid role name')
       }
+    }
+
+    return {
+      staff,
+      token: await generateToken(payload)
     }
   }
 
