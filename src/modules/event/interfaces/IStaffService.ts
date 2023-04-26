@@ -1,8 +1,8 @@
-import { IAuthCodeData, ICreateStaffData, IGetStaff, IStaff, IUpdateEventData } from '../types'
+import { IAuthCodeData, ICreateStaffData, IStaff, IUpdateEventData } from '../types'
 
 export interface IStaffService {
   createStaff(data: ICreateStaffData): Promise<IStaff>
-  authStaffCode(data: IAuthCodeData): Promise<IGetStaff>
+  authStaffCode(data: IAuthCodeData): Promise<{ staff: IStaff; token: string }>
   getStaffByUuid(uuid: string): Promise<IStaff | null>
   getStaffByCode(code: string): Promise<IStaff | null>
   getAllStaffByEventUuid(eventUuid: string): Promise<IStaff[]>
