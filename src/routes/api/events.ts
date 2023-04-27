@@ -249,7 +249,6 @@ router.get(
   asyncHandlerDecorator(eventsController.getProduct)
 )
 
-
 router.patch(
   '/products',
   celebrate({
