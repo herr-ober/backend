@@ -7,7 +7,7 @@ import {
   ProductAlreadyExistsError
 } from '../errors'
 import { ICategoryRepo, IEventRepo, IProductRepo, IProductService } from '../interfaces'
-import { ICategory, ICreateProductData, IEvent, IProduct } from '../types'
+import { ICategory, ICreateProductData, IEvent, IProduct, IUpdateProductData } from '../types'
 
 @injectable()
 class ProductService implements IProductService {
@@ -52,6 +52,10 @@ class ProductService implements IProductService {
 
   async getProductsByCategory(eventUuid: string, categoryUuid: string): Promise<IProduct[]> {
     return this.productRepo.getAllByCategoryUuid(eventUuid, categoryUuid)
+  }
+
+  async updateProductByUuid(uuid: string, data: IUpdateProductData): Promise<IProduct | null> {
+    return this.productRepo.updateByUuid(uuid, data)
   }
 
   async deleteProductByUuid(uuid: string, suppressError: boolean = false): Promise<number> {

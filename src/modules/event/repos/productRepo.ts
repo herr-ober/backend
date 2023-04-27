@@ -1,7 +1,7 @@
 import { injectable } from 'inversify'
 import database from '../../databaseModels'
 import { IProductRepo } from '../interfaces'
-import { ICreateProductData, IProduct } from '../types'
+import { ICreateProductData, IProduct , IUpdateProductData} from '../types'
 
 @injectable()
 class ProductRepo implements IProductRepo {
@@ -86,6 +86,24 @@ class ProductRepo implements IProductRepo {
     return database.Product.destroy({
       where: criteria
     })
+  }
+
+  
+  async updateByUuid(uuid: string, data: IUpdateProductData, scopes?: string[]): Promise<IProduct | null> {
+      const updateData: IUpdateProductData = {};
+
+      if (data.price !== undefined) {
+        updateData.price = data.price;
+      }
+
+      if (data.available !== undefined) {
+        updateData.available = data.available;
+      }
+
+      await database.Product.update(updateData, { where: { uuid } });
+
+      const updatedProduct = await database.Product.scope(scopes).findOne({ where: { uuid } });
+      return updatedProduct;
   }
 
   async deleteByUuid(uuid: string): Promise<number> {
