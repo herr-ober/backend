@@ -88,21 +88,8 @@ class ProductRepo implements IProductRepo {
     })
   }
 
-  async updateByUuid(uuid: string, data: IUpdateProductData, scopes?: string[]): Promise<IProduct | null> {
-    const updateData: IUpdateProductData = {}
-
-    if (data.price !== undefined) {
-      updateData.price = data.price
-    }
-
-    if (data.available !== undefined) {
-      updateData.available = data.available
-    }
-
-    await database.Product.update(updateData, { where: { uuid } })
-
-    const updatedProduct = await database.Product.scope(scopes).findOne({ where: { uuid } })
-    return updatedProduct
+  async updateByUuid(uuid: string, data: IUpdateProductData, scopes?: string[]): Promise<number[]> {
+    return this.update( {uuid} , data)
   }
 
   async deleteByUuid(uuid: string): Promise<number> {

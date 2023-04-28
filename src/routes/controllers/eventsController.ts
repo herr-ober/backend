@@ -371,7 +371,7 @@ async function updateProduct(req: Request, res: Response, next: NextFunction) {
   return productService
     .updateProductByUuid(uuid, updates)
     .then((product: EventModule.types.IProduct | null) => {
-      return res.status(204).json({ product })
+      return res.status(204).send()
     })
     .catch((error: Error) => {
       logger.error('Product updating error', { error })

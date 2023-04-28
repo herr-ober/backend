@@ -6,7 +6,7 @@ export interface IProductRepo {
   getByNameAndEvent(eventUuid: string, name: string, scopes?: string[]): Promise<IProduct | null>
   getAllByEventUuid(eventUuid: string, scopes?: string[]): Promise<IProduct[]>
   getAllByCategoryUuid(eventUuid: string, categoryUuid: string, scopes?: string[]): Promise<IProduct[]>
-  updateByUuid(uuid: string, data: IUpdateProductData, scopes?: string[]): Promise<IProduct | null>
+  updateByUuid(uuid: string, data: IUpdateProductData, scopes?: string[]): Promise<number[]>
   deleteByUuid(uuid: string): Promise<number>
   deleteAllByEventUuid(eventUuid: string): Promise<number>
 }
