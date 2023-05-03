@@ -76,6 +76,10 @@ class ProductRepo implements IProductRepo {
     })
   }
 
+  async updateByUuid(uuid: string, data: IUpdateProductData, scopes?: string[]): Promise<number[]> {
+    return this.update({ uuid }, data)
+  }
+
   /**
    * It deletes a product from the database
    * @param {object} criteria - object - This is the criteria that you want to use to delete the
@@ -86,10 +90,6 @@ class ProductRepo implements IProductRepo {
     return database.Product.destroy({
       where: criteria
     })
-  }
-
-  async updateByUuid(uuid: string, data: IUpdateProductData, scopes?: string[]): Promise<number[]> {
-    return this.update( {uuid} , data)
   }
 
   async deleteByUuid(uuid: string): Promise<number> {

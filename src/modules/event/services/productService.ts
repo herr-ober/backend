@@ -54,7 +54,7 @@ class ProductService implements IProductService {
     return this.productRepo.getAllByCategoryUuid(eventUuid, categoryUuid)
   }
 
-  async updateProductByUuid(uuid: string, data: IUpdateProductData): Promise<IProduct | null> {
+  async updateProductByUuid(uuid: string, data: IUpdateProductData): Promise<number[]> {
     return this.productRepo.updateByUuid(uuid, data)
   }
 
