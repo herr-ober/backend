@@ -33,11 +33,6 @@ module.exports = {
         type: Sequelize.DataTypes.DOUBLE(7, 2),
         allowNull: false
       },
-      available: {
-        type: Sequelize.DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true
-      },
       createdAt: Sequelize.DataTypes.DATE,
       updatedAt: Sequelize.DataTypes.DATE
     })
