@@ -13,13 +13,19 @@ import {
 import { IAccountRepo, IAccountService } from '../interfaces'
 import { IAccount, IAuthPasswordData, ICreateAccountData, IUpdateAccountData } from '../types'
 import { TokenIssuer } from '../../../common/enums'
+import * as EventModule from '../../event'
 
 @injectable()
 class AccountService implements IAccountService {
   private readonly accountRepo: IAccountRepo
+  private readonly eventService: EventModule.interfaces.IEventService
 
-  public constructor(@inject(DI_TYPES.AccountRepo) accountRepo: IAccountRepo) {
+  public constructor(
+    @inject(DI_TYPES.AccountRepo) accountRepo: IAccountRepo,
+    @inject(EventModule.DI_TYPES.EventService) eventService: EventModule.interfaces.IEventService
+  ) {
     this.accountRepo = accountRepo
+    this.eventService = eventService
   }
 
   async createAccount(data: ICreateAccountData): Promise<IAccount> {
@@ -30,7 +36,7 @@ class AccountService implements IAccountService {
     return this.accountRepo.create(data)
   }
 
-  async authPassword(data: IAuthPasswordData): Promise<string> {
+  async authPassword(data: IAuthPasswordData): Promise<{ token: string; account: IAccount }> {
     const account: IAccount | null = await this.getAccountByEmail(data.email)
     if (!account) throw new InvalidAuthPasswordDataError('Email or password incorrect')
 
@@ -42,7 +48,10 @@ class AccountService implements IAccountService {
       sub: account.uuid,
       exp: addTime('1d').getTime()
     }
-    return generateToken(payload)
+
+    const token: string = await generateToken(payload)
+
+    return { token, account }
   }
 
   async authToken(token: string): Promise<IAccount> {
@@ -62,6 +71,9 @@ class AccountService implements IAccountService {
   }
 
   async updateAccountByUuid(uuid: string, data: IUpdateAccountData): Promise<number[]> {
+    if (data.password) {
+      data.passwordHash = await generateHash(data.password)
+    }
     const affectedRows: number[] = await this.accountRepo.updateByUuid(uuid, data)
     if (!affectedRows[0]) {
       throw new BadAccountUpdateDataError('Failed to update account - 0 rows affected')
@@ -70,6 +82,11 @@ class AccountService implements IAccountService {
   }
 
   async deleteAccountByUuid(uuid: string, suppressError: boolean = false): Promise<number> {
+    const event: EventModule.types.IEvent | null = await this.eventService.getEventByOrganizerUuid(uuid)
+    if (!event) throw new EventModule.errors.EventNotFoundError('Event does not exist')
+
+    await this.eventService.deleteEventByUuid(event.uuid)
+
     const affectedRows: number = await this.accountRepo.deleteByUuid(uuid)
     if (affectedRows < 0 && !suppressError) {
       throw new BadAccountDeletionDataError('Failed to delete account - 0 rows affected')

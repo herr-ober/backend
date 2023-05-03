@@ -8,4 +8,5 @@ export interface IStaffService {
   getAllStaffByEventUuid(eventUuid: string): Promise<IStaff[]>
   updateStaffByUuid(uuid: string, data: IUpdateEventData): Promise<number[]>
   deleteStaffByUuid(uuid: string, suppressError?: boolean): Promise<number>
+  deleteAllStaffByEventUuid(eventUuid: string, suppressError?: boolean): Promise<number>
 }
