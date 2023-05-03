@@ -7,4 +7,5 @@ export interface IProductService {
   getProductsByEventUuid(eventUuid: string): Promise<IProduct[]>
   getProductsByCategory(eventUuid: string, categoryUuid: string): Promise<IProduct[]>
   deleteProductByUuid(uuid: string, suppressError?: boolean): Promise<number>
+  deleteAllProductsByEventUuid(eventUuid: string, suppressError?: boolean): Promise<number>
 }
