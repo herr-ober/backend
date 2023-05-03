@@ -10,4 +10,5 @@ export interface IOrderService {
   updateOrderByUuid(orderUuid: string, updates: IUpdateOrderData): Promise<number[]>
   updateOrderPositionByUuid(orderPositionUuid: string, updates: IUpdateOrderPositionData): Promise<number[]>
   deleteOrderByUuid(uuid: string, suppressError?: boolean): Promise<number>
+  deleteAllOrdersByEventUuid(eventUuid: string, suppressError?: boolean): Promise<void>
 }

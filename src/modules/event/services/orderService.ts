@@ -84,11 +84,22 @@ class OrderService implements IOrderService {
   }
 
   async deleteOrderByUuid(uuid: string, suppressError: boolean = false): Promise<number> {
+    const positionsAffectedRows: number = await this.orderPositionRepo.deleteAllByOrderUuid(uuid)
+    if (positionsAffectedRows < 0 && !suppressError) {
+      throw new BadOrderDeletionDataError('Failed to delete order positions - 0 rows affected')
+    }
     const affectedRows: number = await this.orderRepo.deleteByUuid(uuid)
     if (affectedRows < 0 && !suppressError) {
       throw new BadOrderDeletionDataError('Failed to delete order - 0 rows affected')
     }
     return affectedRows
+  }
+
+  async deleteAllOrdersByEventUuid(eventUuid: string, suppressError: boolean = false): Promise<void> {
+    const orders: IOrder[] = await this.orderRepo.getAllByEventUuid(eventUuid)
+    orders.forEach((order: IOrder) => {
+      this.deleteOrderByUuid(order.uuid, suppressError)
+    })
   }
 }
 

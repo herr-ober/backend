@@ -261,8 +261,8 @@ router.patch(
       uuid: Joi.string().required(),
       updates: Joi.object()
         .keys({
-          price: Joi.string(),
-          available: Joi.string()
+          price: Joi.number().optional(),
+          available: Joi.boolean().optional()
         })
         .required()
     })

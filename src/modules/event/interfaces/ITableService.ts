@@ -7,4 +7,5 @@ export interface ITableService {
   getTableByNumber(number: number): Promise<ITable | null>
   getAllTablesByEventUuid(eventUuid: string): Promise<ITable[] | null>
   deleteTableByUuid(uuid: string, suppressError?: boolean): Promise<number>
+  deleteAllTablesByEventUuid(uuid: string, suppressError?: boolean): Promise<number>
 }

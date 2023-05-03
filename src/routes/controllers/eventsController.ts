@@ -81,7 +81,7 @@ async function deleteEvent(req: Request, res: Response, next: NextFunction) {
 
   return eventService
     .getEventByOrganizerUuid(organizerUuid)
-    .then((event: EventModule.types.IEvent | null) => {
+    .then(async (event: EventModule.types.IEvent | null) => {
       if (!event)
         throw new EventModule.errors.EventNotFoundError('Cannot find event associated to requesting organizer')
 
@@ -370,7 +370,7 @@ async function updateProduct(req: Request, res: Response, next: NextFunction) {
 
   return productService
     .updateProductByUuid(uuid, updates)
-    .then((product: EventModule.types.IProduct | null) => {
+    .then(() => {
       return res.status(204).send()
     })
     .catch((error: Error) => {
