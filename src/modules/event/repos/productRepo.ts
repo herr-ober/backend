@@ -92,10 +92,6 @@ class ProductRepo implements IProductRepo {
     })
   }
 
-  async updateByUuid(uuid: string, data: IUpdateProductData, scopes?: string[]): Promise<number[]> {
-    return this.update({ uuid }, data)
-  }
-
   async deleteByUuid(uuid: string): Promise<number> {
     return this.delete({ uuid })
   }

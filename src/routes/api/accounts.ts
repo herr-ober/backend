@@ -76,10 +76,7 @@ router.delete(
       .keys({
         authorization: Joi.string().required()
       })
-      .unknown(true),
-    [Segments.BODY]: Joi.object().keys({
-      uuid: Joi.string().required()
-    })
+      .unknown(true)
   }),
   async (req, res, next) => {
     await isAuthenticated([TokenIssuer.ACCOUNT], req, res, next)
