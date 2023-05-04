@@ -56,9 +56,9 @@ router.patch(
     [Segments.BODY]: Joi.object().keys({
       updates: Joi.object()
         .keys({
-          email: Joi.string(),
-          name: Joi.string(),
-          password: Joi.string()
+          email: Joi.string().email().optional(),
+          name: Joi.string().optional(),
+          password: Joi.string().optional()
         })
         .required()
     })

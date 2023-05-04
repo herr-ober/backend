@@ -53,9 +53,9 @@ router.patch(
     [Segments.BODY]: Joi.object().keys({
       updates: Joi.object()
         .keys({
-          name: Joi.string(),
-          location: Joi.string(),
-          date: Joi.date()
+          name: Joi.string().optional(),
+          location: Joi.string().optional(),
+          date: Joi.date().optional()
         })
         .required()
     })
@@ -151,8 +151,8 @@ router.patch(
       uuid: Joi.string().required(),
       updates: Joi.object()
         .keys({
-          name: Joi.string(),
-          role: Joi.string()
+          name: Joi.string().optional(),
+          role: Joi.string().optional()
         })
         .required()
     })
@@ -437,8 +437,8 @@ router.patch(
       uuid: Joi.string().required(),
       updates: Joi.object()
         .keys({
-          paid: Joi.boolean(),
-          status: Joi.string()
+          paid: Joi.boolean().optional(),
+          status: Joi.string().optional()
         })
         .required()
     })
@@ -460,7 +460,7 @@ router.patch(
       uuid: Joi.string().required(),
       updates: Joi.object()
         .keys({
-          status: Joi.string()
+          status: Joi.string().optional()
         })
         .required()
     })
