@@ -38,6 +38,8 @@ async function getAccount(req: Request, res: Response, next: NextFunction) {
     .getAccountByUuid(uuid)
     .then((account: AccountModule.types.IAccount | null) => {
       if (!account) throw new AccountModule.errors.AccountNotFoundError('Account does not exist')
+
+      return res.status(200).json({ uuid: account.uuid, email: account.email, name: account.name })
     })
     .catch((error: Error) => {
       if (error instanceof AccountModule.errors.AccountNotFoundError) {
