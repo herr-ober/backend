@@ -35,6 +35,11 @@ const sequelize: Sequelize = new Sequelize(databaseName, username, password, {
 
 const modelFiles = glob.sync(path.join(__dirname, '**', '*Model.*s').replaceAll(/\\/g, '/'))
 
+/* This code iterates over an array of file paths (`modelFiles`) and requires each file as a module. It
+then checks if the module is a function or a default export and calls it with the `sequelize` and
+`DataTypes` objects as arguments to create a model. The created model is then added to the
+`database` object with its name as the key. This code is dynamically loading all the model files in
+the current directory and its subdirectories and adding them to the `database` object. */
 modelFiles.forEach((file: string) => {
   // since `modelFiles` and consequently `files` don't depend on user input, we can safely require these dynamic files
   const module: any = require(file)
@@ -43,6 +48,11 @@ modelFiles.forEach((file: string) => {
   database[model.name] = model
 })
 
+/* This code is iterating over all the keys (model names) in the `database` object and checking if the
+corresponding model has an `associate` function. If it does, it calls the `associate` function with
+the `database` object as an argument. This is a common pattern in Sequelize where models can define
+associations with other models using the `associate` function. By calling this function for each
+model, the associations between models are established in the `database` object. */
 Object.keys(database).forEach((modelName) => {
   if (database[modelName].associate) {
     database[modelName].associate(database)

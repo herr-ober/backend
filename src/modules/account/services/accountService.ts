@@ -28,6 +28,14 @@ class AccountService implements IAccountService {
     this.eventService = eventService
   }
 
+  /**
+   * This function creates a new account with a unique email and a hashed password.
+   * @param {ICreateAccountData} data - ICreateAccountData, which is an interface defining the shape of
+   * the data required to create an account. It likely includes properties such as email, password, and
+   * any other relevant information needed to create an account.
+   * @returns The `createAccount` function is returning a Promise that resolves to an `IAccount`
+   * object.
+   */
   async createAccount(data: ICreateAccountData): Promise<IAccount> {
     const existingAccount: IAccount | null = await this.getAccountByEmail(data.email)
     if (existingAccount) throw new BadAccountCreationDataError('Email is already associated with an account')
@@ -36,6 +44,12 @@ class AccountService implements IAccountService {
     return this.accountRepo.create(data)
   }
 
+  /**
+   * This function authenticates a user's password and generates a JWT token for the user's account.
+   * @param {IAuthPasswordData} data - An object containing the email and password of the user trying
+   * to authenticate.
+   * @returns An object containing a `token` string and an `account` object of type `IAccount`.
+   */
   async authPassword(data: IAuthPasswordData): Promise<{ token: string; account: IAccount }> {
     const account: IAccount | null = await this.getAccountByEmail(data.email)
     if (!account) throw new InvalidAuthPasswordDataError('Email or password incorrect')
@@ -54,6 +68,12 @@ class AccountService implements IAccountService {
     return { token, account }
   }
 
+  /**
+   * This function verifies a token and returns an account object if the token is valid.
+   * @param {string} token - The `token` parameter is a string representing a JSON Web Token (JWT) that
+   * is used for authentication. It is passed to the `authToken` function as an argument.
+   * @returns an object of type `IAccount` wrapped in a Promise.
+   */
   async authToken(token: string): Promise<IAccount> {
     const payload: jose.JWTPayload = await verifyToken(token)
     const account: IAccount | null = await this.getAccountByUuid(payload.sub!)
@@ -70,6 +90,17 @@ class AccountService implements IAccountService {
     return this.accountRepo.getByEmail(email)
   }
 
+  /**
+   * This is an async function that updates an account by UUID and returns the number of affected rows.
+   * @param {string} uuid - A string representing the unique identifier of an account that needs to be
+   * updated.
+   * @param {IUpdateAccountData} data - The `data` parameter is an object of type `IUpdateAccountData`
+   * which contains the data to be updated for an account. It may contain properties such as
+   * `password`, `passwordHash`, `email`, `firstName`, `lastName`, etc. If the `password` property is
+   * present,
+   * @returns an array of numbers, which represent the number of affected rows after updating an
+   * account with the given UUID and data.
+   */
   async updateAccountByUuid(uuid: string, data: IUpdateAccountData): Promise<number[]> {
     if (data.password) {
       data.passwordHash = await generateHash(data.password)
@@ -81,6 +112,16 @@ class AccountService implements IAccountService {
     return affectedRows
   }
 
+  /**
+   * This function deletes an account by its UUID after checking if an event exists for the same
+   * organizer UUID.
+   * @param {string} uuid - The unique identifier of the account to be deleted.
+   * @param {boolean} [suppressError=false] - suppressError is a boolean parameter that is set to false
+   * by default. If set to true, it will prevent the function from throwing an error if the account
+   * deletion fails.
+   * @returns a Promise that resolves to a number, which represents the number of affected rows after
+   * deleting an account by UUID.
+   */
   async deleteAccountByUuid(uuid: string, suppressError: boolean = false): Promise<number> {
     const event: EventModule.types.IEvent | null = await this.eventService.getEventByOrganizerUuid(uuid)
     if (!event) throw new EventModule.errors.EventNotFoundError('Event does not exist')
