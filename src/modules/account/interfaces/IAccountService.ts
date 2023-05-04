@@ -2,7 +2,7 @@ import { IAccount, IAuthPasswordData, ICreateAccountData, IUpdateAccountData } f
 
 export interface IAccountService {
   createAccount(data: ICreateAccountData): Promise<IAccount>
-  authPassword(data: IAuthPasswordData): Promise<string>
+  authPassword(data: IAuthPasswordData): Promise<{ token: string; account: IAccount }>
   authToken(token: string): Promise<IAccount>
   getAccountByUuid(uuid: string): Promise<IAccount | null>
   getAccountByEmail(email: string): Promise<IAccount | null>

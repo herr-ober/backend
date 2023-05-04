@@ -81,7 +81,7 @@ async function deleteEvent(req: Request, res: Response, next: NextFunction) {
 
   return eventService
     .getEventByOrganizerUuid(organizerUuid)
-    .then((event: EventModule.types.IEvent | null) => {
+    .then(async (event: EventModule.types.IEvent | null) => {
       if (!event)
         throw new EventModule.errors.EventNotFoundError('Cannot find event associated to requesting organizer')
 
@@ -364,6 +364,21 @@ async function getProducts(req: Request, res: Response, next: NextFunction) {
     })
 }
 
+async function updateProduct(req: Request, res: Response, next: NextFunction) {
+  const uuid: string = req.body.uuid
+  const updates: EventModule.types.IUpdateProductData = req.body.updates
+
+  return productService
+    .updateProductByUuid(uuid, updates)
+    .then(() => {
+      return res.status(204).send()
+    })
+    .catch((error: Error) => {
+      logger.error('Product updating error', { error })
+      throw new InternalError('Failed to update product')
+    })
+}
+
 async function deleteProduct(req: Request, res: Response, next: NextFunction) {
   const uuid: string = req.body.uuid
 
@@ -572,5 +587,6 @@ export default {
   getOrder,
   updateOrder,
   updateOrderPosition,
-  deleteOrder
+  deleteOrder,
+  updateProduct
 }

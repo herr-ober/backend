@@ -7,7 +7,7 @@ import {
   ProductAlreadyExistsError
 } from '../errors'
 import { ICategoryRepo, IEventRepo, IProductRepo, IProductService } from '../interfaces'
-import { ICategory, ICreateProductData, IEvent, IProduct } from '../types'
+import { ICategory, ICreateProductData, IEvent, IProduct, IUpdateProductData } from '../types'
 
 @injectable()
 class ProductService implements IProductService {
@@ -54,8 +54,20 @@ class ProductService implements IProductService {
     return this.productRepo.getAllByCategoryUuid(eventUuid, categoryUuid)
   }
 
+  async updateProductByUuid(uuid: string, data: IUpdateProductData): Promise<number[]> {
+    return this.productRepo.updateByUuid(uuid, data)
+  }
+
   async deleteProductByUuid(uuid: string, suppressError: boolean = false): Promise<number> {
     const affectedRows: number = await this.productRepo.deleteByUuid(uuid)
+    if (affectedRows < 0 && !suppressError) {
+      throw new BadStaffDeletionDataError('Failed to delete product - 0 rows affected')
+    }
+    return affectedRows
+  }
+
+  async deleteAllProductsByEventUuid(eventUuid: string, suppressError: boolean = false): Promise<number> {
+    const affectedRows: number = await this.productRepo.deleteAllByEventUuid(eventUuid)
     if (affectedRows < 0 && !suppressError) {
       throw new BadStaffDeletionDataError('Failed to delete product - 0 rows affected')
     }

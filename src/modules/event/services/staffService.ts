@@ -77,6 +77,14 @@ class StaffService implements IStaffService {
     }
     return affectedRows
   }
+
+  async deleteAllStaffByEventUuid(eventUuid: string, suppressError: boolean = false): Promise<number> {
+    const affectedRows: number = await this.staffRepo.deleteAllByEventUuid(eventUuid)
+    if (affectedRows < 0 && !suppressError) {
+      throw new BadStaffDeletionDataError('Failed to delete staff - 0 rows affected')
+    }
+    return affectedRows
+  }
 }
 
 export default StaffService

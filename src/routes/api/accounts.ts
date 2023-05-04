@@ -3,6 +3,7 @@ import { Router } from 'express'
 import asyncHandlerDecorator from '../../common/util/asyncHandlerDecorator'
 import accountsController from '../controllers/accountsController'
 import { isAuthenticated } from '../middlewares/authMiddleware'
+import { TokenIssuer } from '../../common/enums'
 
 const router: Router = Router()
 
@@ -16,6 +17,21 @@ router.post(
     })
   }),
   asyncHandlerDecorator(accountsController.createAccount)
+)
+
+router.get(
+  '/',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true)
+  }),
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT], req, res, next)
+  },
+  asyncHandlerDecorator(accountsController.getAccount)
 )
 
 router.post(
@@ -47,7 +63,9 @@ router.patch(
         .required()
     })
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT], req, res, next)
+  },
   asyncHandlerDecorator(accountsController.updateAccount)
 )
 
@@ -63,7 +81,9 @@ router.delete(
       uuid: Joi.string().required()
     })
   }),
-  isAuthenticated,
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT], req, res, next)
+  },
   asyncHandlerDecorator(accountsController.deleteAccount)
 )
 

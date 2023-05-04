@@ -13,6 +13,7 @@ class ProductModel
   declare categoryUuid: string
   declare name: string
   declare price: number
+  declare available: boolean
 
   declare createdAt: CreationOptional<Date>
   declare updatedAt: CreationOptional<Date>
@@ -47,6 +48,11 @@ export default function (sequelize: Sequelize) {
       price: {
         type: DataTypes.DOUBLE(7, 2),
         allowNull: false
+      },
+      available: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
       },
       createdAt: DataTypes.DATE,
       updatedAt: DataTypes.DATE

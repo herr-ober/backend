@@ -249,6 +249,30 @@ router.get(
   asyncHandlerDecorator(eventsController.getProduct)
 )
 
+router.patch(
+  '/products',
+  celebrate({
+    [Segments.HEADERS]: Joi.object()
+      .keys({
+        authorization: Joi.string().required()
+      })
+      .unknown(true),
+    [Segments.BODY]: Joi.object().keys({
+      uuid: Joi.string().required(),
+      updates: Joi.object()
+        .keys({
+          price: Joi.number().optional(),
+          available: Joi.boolean().optional()
+        })
+        .required()
+    })
+  }),
+  async (req, res, next) => {
+    await isAuthenticated([TokenIssuer.ACCOUNT, TokenIssuer.KITCHEN], req, res, next)
+  },
+  asyncHandlerDecorator(eventsController.updateProduct)
+)
+
 router.delete(
   '/products',
   celebrate({
